@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+backend/.venv/
+.venv/
+venv/
+ENV/
+env/
+
+# Python cache & artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.mypy_cache/
+
+# Environment files
+.env
+.env.*
+*.env
+!.env.example
+
+# SQLite database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Build & distribution files
+dist/
+build/
+*.egg-info/
+.vite/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
