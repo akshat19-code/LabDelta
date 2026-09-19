@@ -1,8 +1,9 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from './lib/supabase'
 import DashboardView from './components/DashboardView'
 import ReportsView from './components/ReportsView'
 import ReportDetailView from './components/ReportDetailView'
+import CompareView from './components/CompareView'
 import AddReportModal from './components/AddReportModal'
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
   const [currentTab, setCurrentTab] = useState('reports') // 'dashboard' | 'reports' | 'compare' | 'trends'
   const [selectedReportId, setSelectedReportId] = useState(null)
   const [isAddReportOpen, setIsAddReportOpen] = useState(false)
+  const [compareInitialCurrId, setCompareInitialCurrId] = useState('')
 
   // 1. Initial session check and auth listener
   useEffect(() => {
@@ -184,26 +186,21 @@ export default function App() {
                 <span>Reports</span>
               </button>
 
-              {/* Compare (Upcoming) */}
+              {/* Compare */}
               <button
                 type="button"
                 onClick={() => {
                   setSelectedReportId(null)
                   setCurrentTab('compare')
                 }}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                   currentTab === 'compare'
                     ? 'bg-[#5B3FE0]/10 text-[#5B3FE0]'
-                    : 'text-stone-400 hover:bg-stone-50 hover:text-stone-600'
+                    : 'text-stone-600 hover:bg-stone-50 hover:text-stone-900'
                 }`}
               >
-                <div className="flex items-center space-x-3">
-                  <span className="text-base">⚖️</span>
-                  <span>Compare</span>
-                </div>
-                <span className="text-[9px] font-bold uppercase tracking-wider bg-stone-100 text-stone-500 px-1.5 py-0.5 rounded">
-                  Later
-                </span>
+                <span className="text-base">⚖️</span>
+                <span>Compare</span>
               </button>
 
               {/* Trends (Upcoming) */}
@@ -255,6 +252,11 @@ export default function App() {
             <ReportDetailView
               reportId={selectedReportId}
               onBack={() => setSelectedReportId(null)}
+              onCompare={(reportId) => {
+                setCompareInitialCurrId(reportId)
+                setSelectedReportId(null)
+                setCurrentTab('compare')
+              }}
             />
           ) : currentTab === 'dashboard' ? (
             <DashboardView
@@ -269,13 +271,10 @@ export default function App() {
               onSelectReport={(id) => setSelectedReportId(id)}
             />
           ) : currentTab === 'compare' ? (
-            <div className="bg-white border border-stone-200 rounded-2xl p-12 text-center max-w-lg space-y-3 mx-auto mt-12">
-              <span className="text-3xl">⚖️</span>
-              <h3 className="text-base font-bold text-stone-900">Report Comparison</h3>
-              <p className="text-xs text-stone-500 leading-relaxed">
-                Delta computation and side-by-side biomarker comparison will be enabled in the comparison stage.
-              </p>
-            </div>
+            <CompareView
+              initialCurrId={compareInitialCurrId}
+              onOpenAddReport={() => setIsAddReportOpen(true)}
+            />
           ) : currentTab === 'trends' ? (
             <div className="bg-white border border-stone-200 rounded-2xl p-12 text-center max-w-lg space-y-3 mx-auto mt-12">
               <span className="text-3xl">📈</span>

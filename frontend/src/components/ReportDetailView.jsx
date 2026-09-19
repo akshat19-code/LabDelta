@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 
 export default function ReportDetailView({ reportId, onBack }) {
@@ -71,8 +71,8 @@ export default function ReportDetailView({ reportId, onBack }) {
 
   return (
     <div className="space-y-6 max-w-4xl antialiased">
-      {/* Back Link */}
-      <div>
+      {/* Back Link & Compare Action */}
+      <div className="flex items-center justify-between">
         <button
           onClick={onBack}
           className="text-xs font-semibold text-stone-500 hover:text-[#5B3FE0] flex items-center space-x-1.5 cursor-pointer transition-colors"
@@ -80,6 +80,15 @@ export default function ReportDetailView({ reportId, onBack }) {
           <span>←</span>
           <span>Back to Report History</span>
         </button>
+        {onCompare && (
+          <button
+            onClick={() => onCompare(report.id)}
+            className="text-xs font-semibold text-[#5B3FE0] hover:text-[#4d34c7] flex items-center space-x-1 cursor-pointer"
+          >
+            <span>Compare with another report</span>
+            <span>→</span>
+          </button>
+        )}
       </div>
 
       {/* Report Header Card */}
