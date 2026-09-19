@@ -1,24 +1,24 @@
 ﻿import { useState, useEffect } from 'react'
 import { supabase } from './lib/supabase'
+import DashboardView from './components/DashboardView'
+import ReportsView from './components/ReportsView'
+import ReportDetailView from './components/ReportDetailView'
+import AddReportModal from './components/AddReportModal'
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:8000'
-
-function App() {
+export default function App() {
   const [session, setSession] = useState(null)
   const [loadingInitial, setLoadingInitial] = useState(true)
   const [isSignUp, setIsSignUp] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [authLoading, setAuthLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [infoMessage, setInfoMessage] = useState('')
 
-  // Backend verification state for authenticated user
-  const [backendVerification, setBackendVerification] = useState({
-    status: 'idle', // 'idle' | 'loading' | 'verified' | 'error'
-    data: null,
-    error: null,
-  })
+  // Navigation state
+  const [currentTab, setCurrentTab] = useState('reports') // 'dashboard' | 'reports' | 'compare' | 'trends'
+  const [selectedReportId, setSelectedReportId] = useState(null)
+  const [isAddReportOpen, setIsAddReportOpen] = useState(false)
 
   // 1. Initial session check and auth listener
   useEffect(() => {
@@ -43,49 +43,6 @@ function App() {
     return () => subscription.unsubscribe()
   }, [])
 
-  // 2. Verify Supabase access token with FastAPI /auth/me
-  useEffect(() => {
-    if (!session?.access_token) {
-      setBackendVerification({ status: 'idle', data: null, error: null })
-      return
-    }
-
-    let isMounted = true
-    const verifyWithBackend = async () => {
-      setBackendVerification({ status: 'loading', data: null, error: null })
-      try {
-        const response = await fetch(`${BACKEND_URL}/auth/me`, {
-          headers: {
-            Authorization: `Bearer ${session.access_token}`,
-          },
-        })
-
-        if (!response.ok) {
-          const errData = await response.json().catch(() => ({}))
-          throw new Error(errData.detail || `Backend returned status ${response.status}`)
-        }
-
-        const data = await response.json()
-        if (isMounted) {
-          setBackendVerification({ status: 'verified', data, error: null })
-        }
-      } catch (err) {
-        if (isMounted) {
-          setBackendVerification({
-            status: 'error',
-            data: null,
-            error: err.message || 'Failed to verify token with FastAPI',
-          })
-        }
-      }
-    }
-
-    verifyWithBackend()
-    return () => {
-      isMounted = false
-    }
-  }, [session])
-
   // Handle Form Submit (Sign in or Sign up)
   const handleAuth = async (e) => {
     e.preventDefault()
@@ -107,7 +64,7 @@ function App() {
       return
     }
 
-    setLoading(true)
+    setAuthLoading(true)
 
     try {
       if (isSignUp) {
@@ -134,25 +91,23 @@ function App() {
     } catch (err) {
       setErrorMessage(err.message || 'Authentication failed. Please check your credentials.')
     } finally {
-      setLoading(false)
+      setAuthLoading(false)
     }
   }
 
   // Handle Logout
   const handleLogout = async () => {
     if (!supabase) return
-    setLoading(true)
     try {
-      const { error } = await supabase.auth.signOut()
-      if (error) throw error
+      await supabase.auth.signOut()
       setEmail('')
       setPassword('')
       setErrorMessage('')
       setInfoMessage('')
+      setSelectedReportId(null)
+      setCurrentTab('reports')
     } catch (err) {
-      setErrorMessage(err.message || 'Error signing out.')
-    } finally {
-      setLoading(false)
+      console.error('Error signing out:', err)
     }
   }
 
@@ -169,90 +124,180 @@ function App() {
   }
 
   // ----------------------------------------------------
-  // AUTHENTICATED TEMPORARY VIEW
+  // AUTHENTICATED REAL APP SHELL (STAGE 3)
   // ----------------------------------------------------
   if (session?.user) {
     return (
-      <div className="min-h-screen bg-[#F8F9FA] text-stone-900 flex flex-col items-center justify-center p-6 antialiased">
-        <div className="w-full max-w-lg bg-white border border-stone-200/90 rounded-2xl shadow-xl shadow-stone-200/50 p-8 md:p-10 space-y-8">
-          
-          {/* Brand Header */}
-          <div className="text-center space-y-2">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#5B3FE0]/10 text-[#5B3FE0] text-3xl font-extrabold mb-1">
-              Δ
-            </div>
-            <h1 className="text-3xl font-bold tracking-tight text-stone-900">
-              Lab<span className="text-[#5B3FE0]">Δ</span>
-            </h1>
-            <p className="text-sm text-stone-500 font-medium">
-              Compare Lab Reports. See What Changed.
-            </p>
-          </div>
-
-          {/* Welcome Card */}
-          <div className="bg-stone-50 border border-stone-200 rounded-xl p-6 text-center space-y-3">
-            <h2 className="text-xl font-semibold text-stone-900">
-              Welcome to Lab<span className="text-[#5B3FE0]">Δ</span>
-            </h2>
-            <div className="inline-block px-3 py-1 bg-white border border-stone-200 rounded-full text-xs font-mono font-medium text-stone-700 shadow-2xs">
-              {session.user.email}
-            </div>
-            <p className="text-stone-600 text-sm pt-1">
-              Your LabDelta workspace is ready.
-            </p>
-          </div>
-
-          {/* Backend Verification Status Card */}
-          <div className="border border-stone-200 rounded-xl p-5 space-y-3 bg-white">
-            <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-stone-500">
-              <span>FastAPI Auth Verification</span>
-              <span className="font-mono lowercase text-[11px] text-stone-400">GET /auth/me</span>
-            </div>
-
-            {backendVerification.status === 'loading' && (
-              <div className="flex items-center space-x-2 text-stone-600 text-sm py-1">
-                <div className="w-4 h-4 border-2 border-[#5B3FE0] border-t-transparent rounded-full animate-spin"></div>
-                <span>Verifying Supabase bearer token with FastAPI...</span>
+      <div className="min-h-screen bg-[#F8F9FA] text-stone-900 flex flex-col md:flex-row antialiased">
+        
+        {/* Left Sidebar */}
+        <aside className="w-full md:w-64 bg-white border-b md:border-b-0 md:border-r border-stone-200/90 flex flex-col justify-between shrink-0">
+          <div>
+            {/* Logo */}
+            <div className="p-6 border-b border-stone-100 flex items-center space-x-3">
+              <div className="w-9 h-9 rounded-xl bg-[#5B3FE0]/10 text-[#5B3FE0] text-xl font-black flex items-center justify-center">
+                Δ
               </div>
-            )}
-
-            {backendVerification.status === 'verified' && (
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2 text-emerald-700 text-sm font-medium">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                  <span>FastAPI Verified Authenticated User</span>
-                </div>
-                <div className="bg-stone-900 text-stone-100 rounded-lg p-3 text-xs font-mono overflow-x-auto">
-                  {JSON.stringify(backendVerification.data, null, 2)}
-                </div>
-              </div>
-            )}
-
-            {backendVerification.status === 'error' && (
-              <div className="space-y-2 text-xs">
-                <div className="flex items-center space-x-2 text-rose-600 font-medium">
-                  <span className="w-2 h-2 rounded-full bg-rose-500"></span>
-                  <span>Backend Verification Failed</span>
-                </div>
-                <p className="bg-rose-50 text-rose-700 border border-rose-200 p-2.5 rounded-lg font-mono">
-                  {backendVerification.error}
+              <div>
+                <h1 className="text-lg font-bold tracking-tight text-stone-900">
+                  Lab<span className="text-[#5B3FE0]">Δ</span>
+                </h1>
+                <p className="text-[10px] text-stone-400 font-medium leading-none">
+                  LabDelta Analysis
                 </p>
               </div>
-            )}
+            </div>
+
+            {/* Navigation Links */}
+            <nav className="p-4 space-y-1">
+              {/* Dashboard */}
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedReportId(null)
+                  setCurrentTab('dashboard')
+                }}
+                className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  currentTab === 'dashboard' && !selectedReportId
+                    ? 'bg-[#5B3FE0]/10 text-[#5B3FE0]'
+                    : 'text-stone-600 hover:bg-stone-50 hover:text-stone-900'
+                }`}
+              >
+                <span className="text-base">📊</span>
+                <span>Dashboard</span>
+              </button>
+
+              {/* Reports */}
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedReportId(null)
+                  setCurrentTab('reports')
+                }}
+                className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  currentTab === 'reports' || selectedReportId
+                    ? 'bg-[#5B3FE0]/10 text-[#5B3FE0]'
+                    : 'text-stone-600 hover:bg-stone-50 hover:text-stone-900'
+                }`}
+              >
+                <span className="text-base">📋</span>
+                <span>Reports</span>
+              </button>
+
+              {/* Compare (Upcoming) */}
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedReportId(null)
+                  setCurrentTab('compare')
+                }}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  currentTab === 'compare'
+                    ? 'bg-[#5B3FE0]/10 text-[#5B3FE0]'
+                    : 'text-stone-400 hover:bg-stone-50 hover:text-stone-600'
+                }`}
+              >
+                <div className="flex items-center space-x-3">
+                  <span className="text-base">⚖️</span>
+                  <span>Compare</span>
+                </div>
+                <span className="text-[9px] font-bold uppercase tracking-wider bg-stone-100 text-stone-500 px-1.5 py-0.5 rounded">
+                  Later
+                </span>
+              </button>
+
+              {/* Trends (Upcoming) */}
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedReportId(null)
+                  setCurrentTab('trends')
+                }}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  currentTab === 'trends'
+                    ? 'bg-[#5B3FE0]/10 text-[#5B3FE0]'
+                    : 'text-stone-400 hover:bg-stone-50 hover:text-stone-600'
+                }`}
+              >
+                <div className="flex items-center space-x-3">
+                  <span className="text-base">📈</span>
+                  <span>Trends</span>
+                </div>
+                <span className="text-[9px] font-bold uppercase tracking-wider bg-stone-100 text-stone-500 px-1.5 py-0.5 rounded">
+                  Later
+                </span>
+              </button>
+            </nav>
           </div>
 
-          {/* Logout Action */}
-          <div className="pt-2">
+          {/* User Profile & Logout */}
+          <div className="p-4 border-t border-stone-100 space-y-3">
+            <div className="px-2 py-1">
+              <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wider block">
+                Signed in as
+              </span>
+              <span className="text-xs font-mono text-stone-700 font-medium truncate block">
+                {session.user.email}
+              </span>
+            </div>
             <button
               onClick={handleLogout}
-              disabled={loading}
-              className="w-full py-3 px-4 rounded-xl text-sm font-semibold border border-stone-300 text-stone-700 bg-white hover:bg-stone-50 hover:border-stone-400 transition-all cursor-pointer shadow-xs disabled:opacity-50"
+              className="w-full py-2 px-3 text-xs font-semibold text-stone-600 hover:text-rose-600 hover:bg-rose-50/70 border border-stone-200 rounded-xl transition-all cursor-pointer text-center block"
             >
-              {loading ? 'Logging out...' : 'Log Out'}
+              Log Out
             </button>
           </div>
+        </aside>
 
-        </div>
+        {/* Main Content Area */}
+        <main className="flex-1 p-6 md:p-10 overflow-y-auto">
+          {selectedReportId ? (
+            <ReportDetailView
+              reportId={selectedReportId}
+              onBack={() => setSelectedReportId(null)}
+            />
+          ) : currentTab === 'dashboard' ? (
+            <DashboardView
+              onOpenAddReport={() => setIsAddReportOpen(true)}
+              onSelectReport={(id) => setSelectedReportId(id)}
+              onGoToReports={() => setCurrentTab('reports')}
+            />
+          ) : currentTab === 'reports' ? (
+            <ReportsView
+              key={isAddReportOpen ? 'open' : 'closed'}
+              onOpenAddReport={() => setIsAddReportOpen(true)}
+              onSelectReport={(id) => setSelectedReportId(id)}
+            />
+          ) : currentTab === 'compare' ? (
+            <div className="bg-white border border-stone-200 rounded-2xl p-12 text-center max-w-lg space-y-3 mx-auto mt-12">
+              <span className="text-3xl">⚖️</span>
+              <h3 className="text-base font-bold text-stone-900">Report Comparison</h3>
+              <p className="text-xs text-stone-500 leading-relaxed">
+                Delta computation and side-by-side biomarker comparison will be enabled in the comparison stage.
+              </p>
+            </div>
+          ) : currentTab === 'trends' ? (
+            <div className="bg-white border border-stone-200 rounded-2xl p-12 text-center max-w-lg space-y-3 mx-auto mt-12">
+              <span className="text-3xl">📈</span>
+              <h3 className="text-base font-bold text-stone-900">Biomarker Trends</h3>
+              <p className="text-xs text-stone-500 leading-relaxed">
+                Historical marker trend charts and visual trajectories will be implemented in the trends stage.
+              </p>
+            </div>
+          ) : null}
+        </main>
+
+        {/* Add Report Modal */}
+        <AddReportModal
+          isOpen={isAddReportOpen}
+          onClose={() => setIsAddReportOpen(false)}
+          userId={session.user.id}
+          onReportCreated={(newId) => {
+            setCurrentTab('reports')
+            setSelectedReportId(newId)
+          }}
+        />
+
       </div>
     )
   }
@@ -363,10 +408,10 @@ function App() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={authLoading}
             className="w-full mt-2 py-3 px-4 bg-[#5B3FE0] hover:bg-[#4d34c7] active:bg-[#432db5] text-white font-semibold text-sm rounded-xl transition-all shadow-md shadow-[#5B3FE0]/25 flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-60"
           >
-            {loading ? (
+            {authLoading ? (
               <>
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 <span>{isSignUp ? 'Creating account...' : 'Signing in...'}</span>
@@ -377,7 +422,7 @@ function App() {
           </button>
         </form>
 
-        {/* Footer info */}
+        {/* Footer */}
         <div className="text-center pt-2 border-t border-stone-100">
           <p className="text-xs text-stone-400">
             Protected by Supabase Authentication
@@ -388,5 +433,3 @@ function App() {
     </div>
   )
 }
-
-export default App
