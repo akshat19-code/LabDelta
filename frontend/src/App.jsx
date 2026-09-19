@@ -4,6 +4,7 @@ import DashboardView from './components/DashboardView'
 import ReportsView from './components/ReportsView'
 import ReportDetailView from './components/ReportDetailView'
 import CompareView from './components/CompareView'
+import TrendsView from './components/TrendsView'
 import AddReportModal from './components/AddReportModal'
 
 export default function App() {
@@ -203,26 +204,21 @@ export default function App() {
                 <span>Compare</span>
               </button>
 
-              {/* Trends (Upcoming) */}
+              {/* Trends */}
               <button
                 type="button"
                 onClick={() => {
                   setSelectedReportId(null)
                   setCurrentTab('trends')
                 }}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                   currentTab === 'trends'
                     ? 'bg-[#5B3FE0]/10 text-[#5B3FE0]'
-                    : 'text-stone-400 hover:bg-stone-50 hover:text-stone-600'
+                    : 'text-stone-600 hover:bg-stone-50 hover:text-stone-900'
                 }`}
               >
-                <div className="flex items-center space-x-3">
-                  <span className="text-base">📈</span>
-                  <span>Trends</span>
-                </div>
-                <span className="text-[9px] font-bold uppercase tracking-wider bg-stone-100 text-stone-500 px-1.5 py-0.5 rounded">
-                  Later
-                </span>
+                <span className="text-base">📈</span>
+                <span>Trends</span>
               </button>
             </nav>
           </div>
@@ -276,13 +272,9 @@ export default function App() {
               onOpenAddReport={() => setIsAddReportOpen(true)}
             />
           ) : currentTab === 'trends' ? (
-            <div className="bg-white border border-stone-200 rounded-2xl p-12 text-center max-w-lg space-y-3 mx-auto mt-12">
-              <span className="text-3xl">📈</span>
-              <h3 className="text-base font-bold text-stone-900">Biomarker Trends</h3>
-              <p className="text-xs text-stone-500 leading-relaxed">
-                Historical marker trend charts and visual trajectories will be implemented in the trends stage.
-              </p>
-            </div>
+            <TrendsView
+              onOpenAddReport={() => setIsAddReportOpen(true)}
+            />
           ) : null}
         </main>
 
