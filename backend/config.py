@@ -1,4 +1,4 @@
-﻿import os
+import os
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -15,3 +15,4 @@ else:
 
 SUPABASE_URL = os.getenv("SUPABASE_URL", "").rstrip("/")
 SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY", "")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")

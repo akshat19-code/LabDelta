@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 
-export default function ReportDetailView({ reportId, onBack }) {
+export default function ReportDetailView({ reportId, onBack, onCompare }) {
   const [report, setReport] = useState(null)
   const [measurements, setMeasurements] = useState([])
   const [loading, setLoading] = useState(true)

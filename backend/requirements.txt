@@ -2,3 +2,6 @@
 uvicorn
 httpx
 python-dotenv
+PyMuPDF
+groq
+python-multipart
