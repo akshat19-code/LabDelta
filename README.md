@@ -1,4 +1,4 @@
-﻿# LabΔ (LabDelta)
+# LabΔ (LabDelta)
 
 A hackathon project for lab delta analysis.
 
@@ -33,16 +33,22 @@ LabDelta/
      source .venv/bin/activate
      ```
 
-3. Install dependencies:
+3. Configure environment variables:
+   Copy `.env.example` to `.env` and fill in your Supabase credentials:
+   ```bash
+   cp .env.example .env
+   ```
+
+4. Install dependencies:
    ```bash
    pip install -r requirements.txt
    ```
 
-4. Run the development server:
+5. Run the development server:
    ```bash
-   uvicorn main:app --reload --port 8000
+   uvicorn backend.main:app --reload --port 8000
    ```
-   The backend API will run at `http://127.0.0.1:8000` (Health check: `http://127.0.0.1:8000/health`).
+   The backend API will run at `http://127.0.0.1:8000` (Health check: `http://127.0.0.1:8000/health`, Auth user check: `http://127.0.0.1:8000/auth/me`).
 
 ### 2. Frontend (React + Vite)
 
@@ -51,13 +57,19 @@ LabDelta/
    cd frontend
    ```
 
-2. Install dependencies:
+2. Configure environment variables:
+   Copy `.env.example` to `.env` and fill in your Supabase client credentials:
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Install dependencies:
    ```bash
    npm install
    ```
 
-3. Start the Vite development server:
+4. Start the Vite development server:
    ```bash
    npm run dev
    ```
-   Open `http://localhost:5173` in your browser. The page will connect to the FastAPI `/health` endpoint.
+   Open `http://localhost:5173` in your browser. The page will display the LabΔ authentication screen with Supabase Auth.

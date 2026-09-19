@@ -1,5 +1,7 @@
-﻿from fastapi import FastAPI
+﻿from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from backend.auth import get_current_user
 
 app = FastAPI(title="LabDelta Backend")
 
@@ -15,6 +17,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/health")
 def health_check():
     return {"status": "ok", "app": "LabDelta"}
+
+
+@app.get("/auth/me")
+async def get_me(current_user: dict = Depends(get_current_user)):
+    return current_user
