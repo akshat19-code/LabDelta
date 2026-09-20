@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '../lib/supabase'
-import { hasDemoData, loadDemoData } from '../lib/demoData'
+import { hasDemoData, loadDemoData, resetDemoData } from '../lib/demoData'
 import { formatDate } from '../lib/formatting'
 import { handleSpotlightMouseMove } from '../lib/spotlight'
 import { useReportsData } from '../context/ReportsContext'
@@ -155,12 +155,12 @@ export default function DashboardView({
   const handleLoadDemo = async () => {
     if (!userId || loadingDemo) return
 
-    // If demo data already exists, alert the user
+    // If demo data already exists, alert the user with reset option
     if (demoLoaded) {
       if (showToast) {
         showToast('Demo reports are already present in your workspace.', 'info', {
-          label: 'View Compare',
-          onClick: onGoToCompare,
+          label: 'Reset Demo Data',
+          onClick: handleResetDemo,
         })
       }
       return
@@ -193,6 +193,37 @@ export default function DashboardView({
     }
   }
 
+  // Handle Demo Data reset
+  const handleResetDemo = async () => {
+    if (!userId || loadingDemo) return
+
+    setLoadingDemo(true)
+    try {
+      const res = await resetDemoData(userId)
+      if (res.success) {
+        if (refreshData) {
+          await refreshData()
+        } else {
+          await loadDashboardData()
+        }
+        if (showToast) {
+          showToast('Demo workspace reset with clean submission dataset.', 'success', {
+            label: 'View Compare',
+            onClick: onGoToCompare,
+          })
+        }
+      } else {
+        if (showToast) {
+          showToast(res.message || 'Failed to reset demo data.', 'error')
+        }
+      }
+    } catch (err) {
+      console.error('Demo reset error:', err)
+    } finally {
+      setLoadingDemo(false)
+    }
+  }
+
   return (
     <div className="space-y-3.5 sm:space-y-4 antialiased">
       {/* Welcome Banner & Primary Actions */}
@@ -212,14 +243,14 @@ export default function DashboardView({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          {/* Demo Data CTA — only displayed before demo data exists */}
-          {!demoLoaded && (
+          {/* Demo Data CTA — Load or Reset */}
+          {!demoLoaded ? (
             <button
               type="button"
               onClick={handleLoadDemo}
               disabled={loadingDemo}
               className="btn-secondary group inline-flex items-center justify-center space-x-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 text-xs font-semibold shadow-xs cursor-pointer"
-              title="Load 4 synthetic demo reports"
+              title="Load synthetic demo reports"
             >
               {loadingDemo ? (
                 <>
@@ -230,6 +261,26 @@ export default function DashboardView({
                 <>
                   <span className="inline-block transition-transform group-hover:scale-125 duration-200">✨</span>
                   <span>Explore Demo</span>
+                </>
+              )}
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleResetDemo}
+              disabled={loadingDemo}
+              className="btn-secondary group inline-flex items-center justify-center space-x-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 text-xs font-semibold shadow-xs cursor-pointer"
+              title="Reset demo reports with clean submission dataset"
+            >
+              {loadingDemo ? (
+                <>
+                  <div className="w-3 h-3 border-2 border-[#5B3FE0] border-t-transparent rounded-full animate-spin"></div>
+                  <span>Resetting...</span>
+                </>
+              ) : (
+                <>
+                  <span className="inline-block transition-transform group-hover:rotate-180 duration-300">🔄</span>
+                  <span>Reset Demo</span>
                 </>
               )}
             </button>

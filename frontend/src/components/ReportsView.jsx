@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '../lib/supabase'
 import { formatDate } from '../lib/formatting'
-import { hasDemoData, loadDemoData } from '../lib/demoData'
+import { hasDemoData, loadDemoData, resetDemoData } from '../lib/demoData'
 import { useReportsData } from '../context/ReportsContext'
 
 export default function ReportsView({ onOpenAddReport, onSelectReport, userId, showToast }) {
@@ -63,6 +63,8 @@ export default function ReportsView({ onOpenAddReport, onSelectReport, userId, s
     }
   }, [isLoaded, cachedReports.length, hasProvider])
 
+  const hasDemoReports = useMemo(() => reports.some((r) => r.source_type === 'demo'), [reports])
+
   const handleLoadDemo = async () => {
     if (!userId || loadingDemo) return
 
@@ -71,7 +73,10 @@ export default function ReportsView({ onOpenAddReport, onSelectReport, userId, s
       const alreadyHas = await hasDemoData(userId)
       if (alreadyHas) {
         if (showToast) {
-          showToast('Demo reports are already loaded.', 'info')
+          showToast('Demo reports are already loaded.', 'info', {
+            label: 'Reset Demo Data',
+            onClick: handleResetDemo,
+          })
         }
         return
       }
@@ -89,6 +94,33 @@ export default function ReportsView({ onOpenAddReport, onSelectReport, userId, s
       } else {
         if (showToast) {
           showToast(res.message || 'Failed to load demo data.', 'error')
+        }
+      }
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoadingDemo(false)
+    }
+  }
+
+  const handleResetDemo = async () => {
+    if (!userId || loadingDemo) return
+
+    setLoadingDemo(true)
+    try {
+      const res = await resetDemoData(userId)
+      if (res.success) {
+        if (refreshData) {
+          await refreshData()
+        } else {
+          await fetchReports()
+        }
+        if (showToast) {
+          showToast('Demo workspace reset with clean submission dataset.', 'success')
+        }
+      } else {
+        if (showToast) {
+          showToast(res.message || 'Failed to reset demo data.', 'error')
         }
       }
     } catch (err) {
@@ -116,6 +148,18 @@ export default function ReportsView({ onOpenAddReport, onSelectReport, userId, s
           </div>
         </div>
         <div className="flex items-center space-x-2">
+          {hasDemoReports && (
+            <button
+              type="button"
+              onClick={handleResetDemo}
+              disabled={loadingDemo}
+              title="Reset demo reports with clean submission dataset"
+              className="btn-secondary inline-flex items-center justify-center space-x-1.5 px-3 py-1.5 sm:py-2 text-xs font-semibold rounded-xl shadow-xs cursor-pointer"
+            >
+              <span>🔄</span>
+              <span className="hidden sm:inline">Reset Demo</span>
+            </button>
+          )}
           <button
             onClick={onOpenAddReport}
             className="btn-primary inline-flex items-center justify-center space-x-1.5 px-3.5 py-1.5 sm:py-2 text-white text-xs font-semibold rounded-xl shadow-xs cursor-pointer"
