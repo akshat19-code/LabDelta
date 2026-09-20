@@ -4,7 +4,7 @@ import { handleSpotlightMouseMove } from '../lib/spotlight'
 import { normalizeTestName } from '../lib/normalization'
 import { useReportsData } from '../context/ReportsContext'
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:8000'
+const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || (import.meta.env.DEV ? 'http://127.0.0.1:8000' : '')).replace(/\/$/, '')
 
 export default function AddReportModal({ isOpen, onClose, onReportCreated, userId }) {
   const { refreshData } = useReportsData()

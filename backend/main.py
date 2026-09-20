@@ -44,6 +44,7 @@ MAX_PDF_SIZE_BYTES = 10 * 1024 * 1024  # 10 MB limit
 
 @app.get("/health")
 @app.get("/api/health")
+@app.get("/api")
 def health_check():
     return {"status": "ok", "app": "LabDelta"}
 

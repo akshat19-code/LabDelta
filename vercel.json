@@ -1,11 +1,15 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
   "buildCommand": "cd frontend && npm install && npm run build",
   "outputDirectory": "frontend/dist",
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/index.py" },
+    { "source": "/api", "destination": "/api/index.py" },
     { "source": "/health", "destination": "/api/index.py" },
     { "source": "/auth/me", "destination": "/api/index.py" },
     { "source": "/extract-report", "destination": "/api/index.py" },
+    { "source": "/favicon.ico", "destination": "/favicon.svg" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
