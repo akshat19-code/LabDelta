@@ -43,16 +43,19 @@ MAX_PDF_SIZE_BYTES = 10 * 1024 * 1024  # 10 MB limit
 
 
 @app.get("/health")
+@app.get("/api/health")
 def health_check():
     return {"status": "ok", "app": "LabDelta"}
 
 
 @app.get("/auth/me")
+@app.get("/api/auth/me")
 async def get_me(current_user: dict = Depends(get_current_user)):
     return current_user
 
 
 @app.post("/extract-report")
+@app.post("/api/extract-report")
 async def extract_report(
     file: UploadFile = File(...),
     current_user: dict = Depends(get_current_user),
