@@ -194,36 +194,36 @@ export default function DashboardView({
   }
 
   return (
-    <div className="space-y-6 sm:space-y-7 antialiased">
+    <div className="space-y-3.5 sm:space-y-4 antialiased">
       {/* Welcome Banner & Primary Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 border-b border-stone-200/80 dark:border-slate-800 pb-4 sm:pb-5">
-        <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 text-[#5B3FE0] text-xl sm:text-2xl font-black flex items-center justify-center shrink-0">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-3 border-b border-stone-200/80 dark:border-slate-800 pb-2.5 sm:pb-3">
+        <div className="flex items-center space-x-2.5">
+          <div className="w-7.5 h-7.5 sm:w-8 sm:h-8 rounded-lg bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 text-[#5B3FE0] text-base sm:text-lg font-black flex items-center justify-center shrink-0">
             📊
           </div>
           <div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-stone-900 dark:text-slate-100">
+            <h2 className="text-lg sm:text-xl font-extrabold tracking-tight text-stone-900 dark:text-slate-100">
               Lab<span className="text-[#5B3FE0]">Δ</span> Overview
             </h2>
-            <p className="text-xs sm:text-sm text-stone-500 dark:text-slate-400 font-medium mt-0.5">
+            <p className="text-[11px] sm:text-xs text-stone-500 dark:text-slate-400 font-medium mt-0.5">
               Track laboratory trends, upload panels, and compute baseline deltas.
             </p>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2">
           {/* Demo Data CTA — only displayed before demo data exists */}
           {!demoLoaded && (
             <button
               type="button"
               onClick={handleLoadDemo}
               disabled={loadingDemo}
-              className="btn-secondary group inline-flex items-center justify-center space-x-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold shadow-xs cursor-pointer"
+              className="btn-secondary group inline-flex items-center justify-center space-x-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 text-xs font-semibold shadow-xs cursor-pointer"
               title="Load 4 synthetic demo reports"
             >
               {loadingDemo ? (
                 <>
-                  <div className="w-3.5 h-3.5 border-2 border-[#5B3FE0] border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-3 h-3 border-2 border-[#5B3FE0] border-t-transparent rounded-full animate-spin"></div>
                   <span>Loading Demo...</span>
                 </>
               ) : (
@@ -238,9 +238,9 @@ export default function DashboardView({
           {/* Add Report Primary CTA */}
           <button
             onClick={onOpenAddReport}
-            className="btn-primary inline-flex items-center justify-center space-x-1.5 px-4 sm:px-4.5 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold shadow-xs"
+            className="btn-primary inline-flex items-center justify-center space-x-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs font-semibold shadow-xs"
           >
-            <span className="text-sm font-bold leading-none">+</span>
+            <span className="text-xs font-bold leading-none">+</span>
             <span>Add Report</span>
           </button>
         </div>
@@ -248,57 +248,57 @@ export default function DashboardView({
 
       {/* Metrics Cards Strip */}
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 lg:gap-5 animate-fade-in">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-2.5 lg:gap-3 animate-fade-in">
           {[1, 2, 3].map((n) => (
-            <div key={n} className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-4 sm:p-5 lg:p-5.5 space-y-2.5 animate-shimmer">
-              <div className="h-3.5 w-24 bg-stone-200/70 dark:bg-slate-700/60 rounded"></div>
-              <div className="h-10 w-16 bg-stone-200/70 dark:bg-slate-700/60 rounded"></div>
-              <div className="h-3.5 w-32 bg-stone-200/50 dark:bg-slate-700/40 rounded"></div>
+            <div key={n} className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-xl p-3 sm:p-3.5 lg:p-4 space-y-2 animate-shimmer">
+              <div className="h-3 w-20 bg-stone-200/70 dark:bg-slate-700/60 rounded"></div>
+              <div className="h-8 w-14 bg-stone-200/70 dark:bg-slate-700/60 rounded"></div>
+              <div className="h-3 w-28 bg-stone-200/50 dark:bg-slate-700/40 rounded"></div>
             </div>
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 lg:gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-2.5 lg:gap-3">
           {/* Total Reports */}
-          <div className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-4 sm:p-5 lg:p-5.5 shadow-2xs space-y-1.5 card-interactive group">
+          <div className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-xl p-3 sm:p-3.5 lg:p-4 shadow-2xs space-y-1 card-interactive group">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-wider text-stone-400 dark:text-slate-400 block">
+              <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-stone-400 dark:text-slate-400 block">
                 Total Reports
               </span>
-              <span className="text-stone-400 dark:text-slate-500 text-lg transition-transform group-hover:scale-110">📋</span>
+              <span className="text-stone-400 dark:text-slate-500 text-base transition-transform group-hover:scale-110">📋</span>
             </div>
-            <div className="text-2xl sm:text-3xl lg:text-4xl font-black text-stone-900 dark:text-slate-100 font-mono">
+            <div className="text-xl sm:text-2xl lg:text-3xl font-black text-stone-900 dark:text-slate-100 font-mono">
               {animatedReports}
             </div>
-            <p className="text-xs sm:text-sm text-stone-400 dark:text-slate-500 font-medium">Recorded laboratory panels</p>
+            <p className="text-[10px] sm:text-[11px] text-stone-400 dark:text-slate-500 font-medium">Recorded laboratory panels</p>
           </div>
 
           {/* Unique Tests */}
-          <div className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-4 sm:p-5 lg:p-5.5 shadow-2xs space-y-1.5 card-interactive group">
+          <div className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-xl p-3 sm:p-3.5 lg:p-4 shadow-2xs space-y-1 card-interactive group">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-wider text-stone-400 dark:text-slate-400 block">
+              <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-stone-400 dark:text-slate-400 block">
                 Tracked Measurements
               </span>
-              <span className="text-[#5B3FE0] dark:text-[#8266FA] text-lg transition-transform group-hover:scale-110">🔬</span>
+              <span className="text-[#5B3FE0] dark:text-[#8266FA] text-base transition-transform group-hover:scale-110">🔬</span>
             </div>
-            <div className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#5B3FE0] dark:text-[#8266FA] font-mono">
+            <div className="text-xl sm:text-2xl lg:text-3xl font-black text-[#5B3FE0] dark:text-[#8266FA] font-mono">
               {animatedTests}
             </div>
-            <p className="text-xs sm:text-sm text-stone-400 dark:text-slate-500 font-medium">Unique test measurements</p>
+            <p className="text-[10px] sm:text-[11px] text-stone-400 dark:text-slate-500 font-medium">Unique test measurements</p>
           </div>
 
           {/* Latest Date */}
-          <div className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-4 sm:p-5 lg:p-5.5 shadow-2xs space-y-1.5 card-interactive group">
+          <div className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-xl p-3 sm:p-3.5 lg:p-4 shadow-2xs space-y-1 card-interactive group">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-wider text-stone-400 dark:text-slate-400 block">
+              <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-stone-400 dark:text-slate-400 block">
                 Latest Report Date
               </span>
-              <span className="text-stone-400 dark:text-slate-500 text-lg transition-transform group-hover:scale-110">📅</span>
+              <span className="text-stone-400 dark:text-slate-500 text-base transition-transform group-hover:scale-110">📅</span>
             </div>
-            <div className="text-xl sm:text-2xl lg:text-3xl font-black text-stone-900 dark:text-slate-100 font-mono pt-0.5">
+            <div className="text-lg sm:text-xl lg:text-2xl font-black text-stone-900 dark:text-slate-100 font-mono pt-0.5">
               {stats.latestReportDate ? formatDate(stats.latestReportDate) : 'None'}
             </div>
-            <p className="text-xs sm:text-sm text-stone-400 dark:text-slate-500 font-medium">Most recent report date</p>
+            <p className="text-[10px] sm:text-[11px] text-stone-400 dark:text-slate-500 font-medium">Most recent report date</p>
           </div>
         </div>
       )}
@@ -306,30 +306,30 @@ export default function DashboardView({
       {/* Quick Action Navigation Strip (Upload → Compare → Understand Change) with Spotlight */}
       <div 
         onMouseMove={handleSpotlightMouseMove}
-        className="spotlight-surface relative overflow-hidden bg-gradient-to-r from-violet-50/80 via-white to-stone-50/60 dark:from-[#131B2E] dark:via-[#162038] dark:to-[#0F172A] border border-violet-200/60 dark:border-slate-800 rounded-3xl p-4.5 sm:p-6 shadow-2xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4 card-interactive"
+        className="spotlight-surface relative overflow-hidden bg-gradient-to-r from-violet-50/80 via-white to-stone-50/60 dark:from-[#131B2E] dark:via-[#162038] dark:to-[#0F172A] border border-violet-200/60 dark:border-slate-800 rounded-2xl p-3.5 sm:p-4.5 shadow-2xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3 card-interactive"
       >
         <div className="absolute -right-4 -bottom-6 text-[#5B3FE0]/5 dark:text-[#5B3FE0]/10 text-8xl font-black select-none pointer-events-none">
           Δ
         </div>
-        <div className="space-y-1 relative z-10">
-          <h3 className="text-sm sm:text-base font-bold text-stone-900 dark:text-slate-100">
+        <div className="space-y-0.5 relative z-10">
+          <h3 className="text-xs sm:text-sm font-bold text-stone-900 dark:text-slate-100">
             Compare Lab Reports. See What Changed.
           </h3>
-          <p className="text-xs sm:text-sm text-stone-600 dark:text-slate-400 max-w-xl leading-relaxed">
+          <p className="text-[11px] sm:text-xs text-stone-600 dark:text-slate-400 max-w-xl leading-relaxed">
             Select two reports to instantly compute baseline differences (Δ), identify newly emerged or missing tests, and observe marker trajectories over time.
           </p>
         </div>
-        <div className="flex items-center space-x-2.5 shrink-0 relative z-10">
+        <div className="flex items-center space-x-2 shrink-0 relative z-10">
           <button
             onClick={onGoToCompare}
-            className="group px-4 py-2 sm:py-2.5 btn-primary text-xs sm:text-sm font-semibold shadow-xs flex items-center space-x-1.5"
+            className="group px-3.5 py-1.5 sm:py-2 btn-primary text-xs font-semibold shadow-xs flex items-center space-x-1.5"
           >
             <span>Launch Compare</span>
             <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
           </button>
           <button
             onClick={onGoToTrends}
-            className="px-4 py-2 sm:py-2.5 btn-secondary text-xs sm:text-sm font-semibold shadow-xs"
+            className="px-3.5 py-1.5 sm:py-2 btn-secondary text-xs font-semibold shadow-xs"
           >
             View Trends
           </button>
@@ -337,15 +337,15 @@ export default function DashboardView({
       </div>
 
       {/* Recent Reports Summary */}
-      <div className="space-y-3 sm:space-y-3.5">
+      <div className="space-y-2.5 sm:space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-stone-600 dark:text-slate-400">
+          <h3 className="text-xs uppercase font-bold tracking-wider text-stone-600 dark:text-slate-400">
             Recent Reports
           </h3>
           {stats.totalReports > 0 && (
             <button
               onClick={onGoToReports}
-              className="text-xs sm:text-sm font-semibold text-[#5B3FE0] dark:text-[#8266FA] hover:underline cursor-pointer group flex items-center space-x-1"
+              className="text-xs font-semibold text-[#5B3FE0] dark:text-[#8266FA] hover:underline cursor-pointer group flex items-center space-x-1"
             >
               <span>View all reports ({stats.totalReports})</span>
               <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
@@ -354,14 +354,14 @@ export default function DashboardView({
         </div>
 
         {loading ? (
-          <div className="space-y-2.5 animate-fade-in">
+          <div className="space-y-2 animate-fade-in">
             {[1, 2, 3].map((n) => (
-              <div key={n} className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-4 sm:p-4.5 flex items-center justify-between animate-shimmer">
-                <div className="space-y-1.5">
-                  <div className="h-4 w-32 bg-stone-200/70 dark:bg-slate-700/60 rounded"></div>
-                  <div className="h-3.5 w-48 bg-stone-200/50 dark:bg-slate-700/40 rounded"></div>
+              <div key={n} className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-xl p-3 sm:p-3.5 flex items-center justify-between animate-shimmer">
+                <div className="space-y-1">
+                  <div className="h-3.5 w-28 bg-stone-200/70 dark:bg-slate-700/60 rounded"></div>
+                  <div className="h-3 w-40 bg-stone-200/50 dark:bg-slate-700/40 rounded"></div>
                 </div>
-                <div className="h-4 w-20 bg-stone-200/50 dark:bg-slate-700/40 rounded"></div>
+                <div className="h-3.5 w-16 bg-stone-200/50 dark:bg-slate-700/40 rounded"></div>
               </div>
             ))}
           </div>

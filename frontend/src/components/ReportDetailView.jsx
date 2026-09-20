@@ -89,9 +89,9 @@ export default function ReportDetailView({ reportId, onBack, onCompare }) {
   }
 
   return (
-    <div className="space-y-5 sm:space-y-6 antialiased animate-fade-in">
+    <div className="space-y-4 sm:space-y-5 antialiased animate-fade-in">
       {/* Back Link & Compare Action */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <button
           onClick={onBack}
           className="text-xs sm:text-sm font-semibold text-stone-500 dark:text-slate-400 hover:text-[#5B3FE0] dark:hover:text-[#8266FA] flex items-center space-x-1.5 cursor-pointer transition-colors"
@@ -102,7 +102,7 @@ export default function ReportDetailView({ reportId, onBack, onCompare }) {
         {onCompare && (
           <button
             onClick={() => onCompare(report.id)}
-            className="btn-primary inline-flex items-center space-x-1.5 px-4 py-2 sm:py-2.5 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-xs cursor-pointer"
+            className="btn-primary inline-flex items-center space-x-1.5 px-3.5 py-1.5 sm:py-2 text-white text-xs font-semibold rounded-xl shadow-xs cursor-pointer"
           >
             <span>Compare with another report</span>
             <span>→</span>
@@ -111,11 +111,11 @@ export default function ReportDetailView({ reportId, onBack, onCompare }) {
       </div>
 
       {/* Report Header Card */}
-      <div className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-3xl p-4.5 sm:p-5.5 lg:p-6 shadow-xs flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div className="space-y-1.5">
+      <div className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-3.5 sm:p-4.5 lg:p-5 shadow-xs flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-4">
+        <div className="space-y-1">
           <div className="flex items-center space-x-2">
             <span
-              className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
+              className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-md ${
                 report.source_type === 'demo'
                   ? 'bg-violet-50 dark:bg-violet-950/60 text-[#5B3FE0] dark:text-[#8266FA] border border-violet-200/70 dark:border-violet-800/60'
                   : report.source_type === 'pdf'
@@ -125,35 +125,35 @@ export default function ReportDetailView({ reportId, onBack, onCompare }) {
             >
               {report.source_type === 'pdf' ? 'PDF Report' : report.source_type === 'demo' ? 'Demo Report' : 'Manual Entry'}
             </span>
-            <span className="text-[11px] sm:text-xs text-stone-400 dark:text-slate-500 font-mono">
+            <span className="text-[10px] sm:text-[11px] text-stone-400 dark:text-slate-500 font-mono">
               Recorded: {formatDate(report.created_at)}
             </span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-stone-900 dark:text-slate-100">
+          <h2 className="text-xl sm:text-2xl font-extrabold text-stone-900 dark:text-slate-100">
             {report.lab_name || 'Laboratory Report'}
           </h2>
-          <p className="text-sm sm:text-base font-semibold text-stone-700 dark:text-slate-300">
+          <p className="text-xs sm:text-sm font-semibold text-stone-700 dark:text-slate-300">
             Report Date: {formatDate(report.report_date, { year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
         </div>
 
-        <div className="text-left md:text-right bg-stone-50 dark:bg-[#0F172A]/70 md:bg-transparent dark:md:bg-transparent p-3.5 sm:p-4 md:p-0 rounded-2xl border md:border-0 border-stone-100 dark:border-slate-800">
-          <span className="text-xs text-stone-500 dark:text-slate-400 uppercase tracking-wider font-semibold block">
+        <div className="text-left md:text-right bg-stone-50 dark:bg-[#0F172A]/70 md:bg-transparent dark:md:bg-transparent p-3 sm:p-3.5 md:p-0 rounded-xl border md:border-0 border-stone-100 dark:border-slate-800">
+          <span className="text-[11px] sm:text-xs text-stone-500 dark:text-slate-400 uppercase tracking-wider font-semibold block">
             Total Measurements
           </span>
-          <span className="text-2xl sm:text-3xl font-black text-stone-900 dark:text-slate-100 font-mono">
+          <span className="text-xl sm:text-2xl font-black text-stone-900 dark:text-slate-100 font-mono">
             {measurements.length} {measurements.length === 1 ? 'measurement' : 'measurements'}
           </span>
         </div>
       </div>
 
       {/* Measurements Table Card with Contained Responsive Scrolling & Card View */}
-      <div className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-3xl shadow-xs overflow-hidden">
-        <div className="px-5 py-3.5 sm:px-6 sm:py-4 border-b border-stone-100 dark:border-slate-800 flex items-center justify-between">
-          <h3 className="text-sm sm:text-base font-bold uppercase tracking-wider text-stone-800 dark:text-slate-200">
+      <div className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl shadow-xs overflow-hidden">
+        <div className="px-4 py-2.5 sm:px-5 sm:py-3 border-b border-stone-100 dark:border-slate-800 flex items-center justify-between">
+          <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-stone-800 dark:text-slate-200">
             Measured Values ({measurements.length})
           </h3>
-          <span className="text-xs text-stone-400 dark:text-slate-500">
+          <span className="text-[11px] sm:text-xs text-stone-400 dark:text-slate-500">
             Laboratory test observations
           </span>
         </div>
@@ -162,11 +162,11 @@ export default function ReportDetailView({ reportId, onBack, onCompare }) {
         <div className="hidden sm:block overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-stone-100 dark:border-slate-800 bg-stone-50/70 dark:bg-[#0F172A]/70 text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-slate-400">
-                <th className="py-3 px-4 sm:px-5">Test</th>
-                <th className="py-3 px-4 sm:px-5">Value</th>
-                <th className="py-3 px-4 sm:px-5">Unit</th>
-                <th className="py-3 px-4 sm:px-5">Reference Range</th>
+              <tr className="border-b border-stone-100 dark:border-slate-800 bg-stone-50/70 dark:bg-[#0F172A]/70 text-[11px] font-bold uppercase tracking-wider text-stone-500 dark:text-slate-400">
+                <th className="py-2.5 px-3.5 sm:px-4">Test</th>
+                <th className="py-2.5 px-3.5 sm:px-4">Value</th>
+                <th className="py-2.5 px-3.5 sm:px-4">Unit</th>
+                <th className="py-2.5 px-3.5 sm:px-4">Reference Range</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-100 dark:divide-slate-800 text-xs sm:text-sm">
@@ -177,23 +177,23 @@ export default function ReportDetailView({ reportId, onBack, onCompare }) {
 
                 return (
                   <tr key={m.id} className="hover:bg-stone-50/60 dark:hover:bg-slate-800/40 transition-colors">
-                    <td className="py-3 px-4 sm:px-5">
-                      <div className="font-bold text-stone-900 dark:text-slate-100 text-sm sm:text-base">
+                    <td className="py-2.5 px-3.5 sm:px-4">
+                      <div className="font-bold text-stone-900 dark:text-slate-100 text-xs sm:text-sm">
                         {m.test_name_normalized}
                       </div>
                       {m.test_name_raw.toLowerCase() !== m.test_name_normalized.toLowerCase() && (
-                        <div className="text-[11px] sm:text-xs text-stone-400 dark:text-slate-500 font-mono">
+                        <div className="text-[10px] sm:text-[11px] text-stone-400 dark:text-slate-500 font-mono">
                           Raw: {m.test_name_raw}
                         </div>
                       )}
                     </td>
-                    <td className="py-3 px-4 sm:px-5 font-black text-stone-900 dark:text-slate-100 font-mono text-base sm:text-lg">
+                    <td className="py-2.5 px-3.5 sm:px-4 font-black text-stone-900 dark:text-slate-100 font-mono text-sm sm:text-base">
                       {displayVal}
                     </td>
-                    <td className="py-3 px-4 sm:px-5 text-stone-500 dark:text-slate-400 text-xs sm:text-sm font-mono">
+                    <td className="py-2.5 px-3.5 sm:px-4 text-stone-500 dark:text-slate-400 text-xs font-mono">
                       {m.unit || '—'}
                     </td>
-                    <td className="py-3 px-4 sm:px-5 text-stone-600 dark:text-slate-400 text-xs font-mono">
+                    <td className="py-2.5 px-3.5 sm:px-4 text-stone-600 dark:text-slate-400 text-xs font-mono">
                       {refDisplay}
                     </td>
                   </tr>
@@ -211,21 +211,21 @@ export default function ReportDetailView({ reportId, onBack, onCompare }) {
             const refDisplay = formatReferenceRange(m.reference_min, m.reference_max, m.reference_text)
 
             return (
-              <div key={m.id} className="p-3 sm:p-3.5 space-y-1.5">
+              <div key={m.id} className="p-2.5 sm:p-3 space-y-1">
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-sm text-stone-900 dark:text-slate-100">
+                  <span className="font-bold text-xs sm:text-sm text-stone-900 dark:text-slate-100">
                     {m.test_name_normalized}
                   </span>
-                  <span className="font-black text-base text-stone-900 dark:text-slate-100 font-mono">
+                  <span className="font-black text-sm sm:text-base text-stone-900 dark:text-slate-100 font-mono">
                     {displayVal} {m.unit || ''}
                   </span>
                 </div>
                 {m.test_name_raw.toLowerCase() !== m.test_name_normalized.toLowerCase() && (
-                  <div className="text-[11px] text-stone-400 dark:text-slate-500 font-mono">
+                  <div className="text-[10px] text-stone-400 dark:text-slate-500 font-mono">
                     Raw: {m.test_name_raw}
                   </div>
                 )}
-                <div className="text-[11px] text-stone-500 dark:text-slate-400 font-mono">
+                <div className="text-[10px] text-stone-500 dark:text-slate-400 font-mono">
                   Ref: {refDisplay}
                 </div>
               </div>
@@ -234,7 +234,7 @@ export default function ReportDetailView({ reportId, onBack, onCompare }) {
         </div>
 
         {measurements.length === 0 && (
-          <div className="py-10 text-center text-xs sm:text-sm text-stone-400 dark:text-slate-500">
+          <div className="py-8 text-center text-xs text-stone-400 dark:text-slate-500">
             No measurements recorded for this report.
           </div>
         )}

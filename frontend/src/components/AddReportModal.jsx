@@ -264,15 +264,15 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
     <div className="fixed inset-0 z-50 overflow-y-auto bg-stone-900/40 dark:bg-black/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 md:p-6 animate-fade-in">
       <div className="bg-white dark:bg-[#111726] rounded-3xl shadow-2xl border border-stone-200/90 dark:border-slate-800 w-full max-w-2xl max-h-[92vh] flex flex-col overflow-hidden animate-scale-in">
         {/* Modal Header */}
-        <div className="px-5 py-3.5 sm:px-6 sm:py-4 border-b border-stone-100 dark:border-slate-800 flex items-center justify-between shrink-0 bg-stone-50/40 dark:bg-slate-900/40">
+        <div className="px-4 py-3 sm:px-5 sm:py-3.5 border-b border-stone-100 dark:border-slate-800 flex items-center justify-between shrink-0 bg-stone-50/40 dark:bg-slate-900/40">
           <div>
-            <h3 className="text-lg sm:text-xl font-extrabold text-stone-900 dark:text-slate-100">
+            <h3 className="text-base sm:text-lg font-extrabold text-stone-900 dark:text-slate-100">
               {mode === 'select' && 'Add Lab Report'}
               {mode === 'upload' && 'Upload Lab Report (PDF)'}
               {mode === 'verify' && 'Verify Extracted Report'}
               {mode === 'manual' && 'Manual Report Entry'}
             </h3>
-            <p className="text-xs text-stone-500 dark:text-slate-400 mt-0.5 sm:mt-1">
+            <p className="text-[11px] sm:text-xs text-stone-500 dark:text-slate-400 mt-0.5">
               {mode === 'select' && 'Choose how you want to add your laboratory report'}
               {mode === 'upload' && 'Extract structured values from a text-based laboratory PDF'}
               {mode === 'verify' && 'Review extracted report details and measurements before confirming'}
@@ -281,16 +281,16 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
           </div>
           <button
             onClick={handleClose}
-            className="w-8 h-8 rounded-full bg-stone-100 dark:bg-slate-800 hover:bg-stone-200 dark:hover:bg-slate-700 text-stone-500 dark:text-slate-400 hover:text-stone-800 dark:hover:text-slate-200 flex items-center justify-center text-sm font-bold transition-colors cursor-pointer"
+            className="w-7.5 h-7.5 rounded-full bg-stone-100 dark:bg-slate-800 hover:bg-stone-200 dark:hover:bg-slate-700 text-stone-500 dark:text-slate-400 hover:text-stone-800 dark:hover:text-slate-200 flex items-center justify-center text-xs font-bold transition-colors cursor-pointer"
           >
             ✕
           </button>
         </div>
 
         {/* Modal Body */}
-        <div className="p-4 sm:p-5 overflow-y-auto flex-1 space-y-4 sm:space-y-4.5">
+        <div className="p-3.5 sm:p-4.5 overflow-y-auto flex-1 space-y-3 sm:space-y-3.5">
           {errorMessage && (
-            <div className="p-3.5 sm:p-4 bg-rose-50 dark:bg-rose-950/40 border border-rose-200/80 dark:border-rose-900/60 rounded-2xl text-xs sm:text-sm text-rose-700 dark:text-rose-300 font-medium flex items-start space-x-2.5 animate-fade-in">
+            <div className="p-3 sm:p-3.5 bg-rose-50 dark:bg-rose-950/40 border border-rose-200/80 dark:border-rose-900/60 rounded-xl text-xs sm:text-sm text-rose-700 dark:text-rose-300 font-medium flex items-start space-x-2 animate-fade-in">
               <span className="text-rose-500 font-bold shrink-0">•</span>
               <span className="flex-1 leading-relaxed">{errorMessage}</span>
             </div>
@@ -298,20 +298,20 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
 
           {/* 1. INITIAL MODE SELECTION (PDF vs Manual) */}
           {mode === 'select' && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4 py-1.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5 py-1">
               {/* PDF Extraction Card */}
               <div
                 onClick={() => setMode('upload')}
                 onMouseMove={handleSpotlightMouseMove}
-                className="spotlight-surface border-2 border-[#5B3FE0]/30 hover:border-[#5B3FE0] bg-violet-50/20 dark:bg-violet-950/20 hover:bg-violet-50/50 dark:hover:bg-violet-950/40 rounded-2xl p-4.5 sm:p-5.5 text-center space-y-3.5 transition-all cursor-pointer card-interactive group shadow-2xs relative"
+                className="spotlight-surface border-2 border-[#5B3FE0]/30 hover:border-[#5B3FE0] bg-violet-50/20 dark:bg-violet-950/20 hover:bg-violet-50/50 dark:hover:bg-violet-950/40 rounded-2xl p-3.5 sm:p-4.5 text-center space-y-2.5 transition-all cursor-pointer card-interactive group shadow-2xs relative"
               >
-                <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 text-[#5B3FE0] text-2xl sm:text-3xl flex items-center justify-center mx-auto transition-transform duration-200 group-hover:scale-110 group-hover:rotate-2">
+                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 text-[#5B3FE0] text-xl sm:text-2xl flex items-center justify-center mx-auto transition-transform duration-200 group-hover:scale-110 group-hover:rotate-2">
                   📄
                 </div>
-                <div className="space-y-1 relative z-10">
+                <div className="space-y-0.5 relative z-10">
                   <div className="flex items-center justify-center space-x-1.5">
-                    <h4 className="text-base sm:text-lg font-bold text-stone-900 dark:text-slate-100">Upload PDF</h4>
-                    <span className="text-[11px] font-bold uppercase tracking-wider bg-[#5B3FE0] text-white px-2 py-0.5 rounded-full">
+                    <h4 className="text-sm sm:text-base font-bold text-stone-900 dark:text-slate-100">Upload PDF</h4>
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-[#5B3FE0] text-white px-1.5 py-0.2 rounded-full">
                       AI Powered
                     </span>
                   </div>
@@ -321,7 +321,7 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
                 </div>
                 <button
                   type="button"
-                  className="w-full py-2.5 px-4 btn-primary text-xs sm:text-sm font-semibold shadow-xs transition-all cursor-pointer flex items-center justify-center space-x-1.5 relative z-10"
+                  className="w-full py-2 px-3.5 btn-primary text-xs font-semibold shadow-xs transition-all cursor-pointer flex items-center justify-center space-x-1.5 relative z-10"
                 >
                   <span>Select PDF Report</span>
                   <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
@@ -335,20 +335,20 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
                   setMode('manual')
                 }}
                 onMouseMove={handleSpotlightMouseMove}
-                className="spotlight-surface border-2 border-stone-200 dark:border-slate-800 hover:border-[#5B3FE0]/40 bg-stone-50/40 dark:bg-slate-900/40 hover:bg-stone-50/80 dark:hover:bg-slate-800/60 rounded-2xl p-4.5 sm:p-5.5 text-center space-y-3.5 transition-all cursor-pointer card-interactive group shadow-2xs relative"
+                className="spotlight-surface border-2 border-stone-200 dark:border-slate-800 hover:border-[#5B3FE0]/40 bg-stone-50/40 dark:bg-slate-900/40 hover:bg-stone-50/80 dark:hover:bg-slate-800/60 rounded-2xl p-3.5 sm:p-4.5 text-center space-y-2.5 transition-all cursor-pointer card-interactive group shadow-2xs relative"
               >
-                <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-stone-100 dark:bg-slate-800 text-stone-700 dark:text-slate-300 text-2xl sm:text-3xl flex items-center justify-center mx-auto transition-transform duration-200 group-hover:scale-110 group-hover:-rotate-2">
+                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-stone-100 dark:bg-slate-800 text-stone-700 dark:text-slate-300 text-xl sm:text-2xl flex items-center justify-center mx-auto transition-transform duration-200 group-hover:scale-110 group-hover:-rotate-2">
                   ✍️
                 </div>
-                <div className="space-y-1 relative z-10">
-                  <h4 className="text-base sm:text-lg font-bold text-stone-900 dark:text-slate-100">Add Values Manually</h4>
+                <div className="space-y-0.5 relative z-10">
+                  <h4 className="text-sm sm:text-base font-bold text-stone-900 dark:text-slate-100">Add Values Manually</h4>
                   <p className="text-xs text-stone-500 dark:text-slate-400 leading-relaxed">
                     Type in individual laboratory biomarkers, categorical results, or custom panel markers directly.
                   </p>
                 </div>
                 <button
                   type="button"
-                  className="w-full py-2.5 px-4 btn-secondary text-xs sm:text-sm font-semibold shadow-xs transition-all cursor-pointer flex items-center justify-center space-x-1.5 relative z-10"
+                  className="w-full py-2 px-3.5 btn-secondary text-xs font-semibold shadow-xs transition-all cursor-pointer flex items-center justify-center space-x-1.5 relative z-10"
                 >
                   <span>Enter Manually</span>
                   <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
@@ -359,10 +359,10 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
 
           {/* 2. PDF UPLOAD SCREEN */}
           {mode === 'upload' && (
-            <div className="space-y-4 py-1">
+            <div className="space-y-3.5 py-1">
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className={`border-2 border-dashed rounded-2xl p-6 sm:p-7 text-center cursor-pointer transition-all ${
+                className={`border-2 border-dashed rounded-2xl p-4 sm:p-5 text-center cursor-pointer transition-all ${
                   selectedFile
                     ? 'border-[#5B3FE0] bg-violet-50/30 dark:bg-violet-950/30'
                     : 'border-stone-300 dark:border-slate-700 hover:border-[#5B3FE0] bg-stone-50/50 dark:bg-slate-900/50 hover:bg-stone-50 dark:hover:bg-slate-800/50'
@@ -375,21 +375,21 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
                   accept=".pdf,application/pdf"
                   className="hidden"
                 />
-                <div className="space-y-2">
-                  <div className="text-4xl sm:text-5xl">📄</div>
+                <div className="space-y-1.5">
+                  <div className="text-3xl sm:text-4xl">📄</div>
                   {selectedFile ? (
                     <div className="space-y-0.5">
-                      <p className="text-sm sm:text-base font-bold text-stone-900 dark:text-slate-100 font-mono break-all">{selectedFile.name}</p>
-                      <p className="text-xs sm:text-sm text-stone-500 dark:text-slate-400">
+                      <p className="text-xs sm:text-sm font-bold text-stone-900 dark:text-slate-100 font-mono break-all">{selectedFile.name}</p>
+                      <p className="text-[11px] sm:text-xs text-stone-500 dark:text-slate-400">
                         {(selectedFile.size / 1024).toFixed(1)} KB — Tap button below to begin extraction
                       </p>
                     </div>
                   ) : (
                     <div>
-                      <p className="text-sm sm:text-base font-bold text-stone-800 dark:text-slate-200">
+                      <p className="text-xs sm:text-sm font-bold text-stone-800 dark:text-slate-200">
                         Tap or click to select a laboratory report PDF
                       </p>
-                      <p className="text-xs sm:text-sm text-stone-500 dark:text-slate-400 mt-1">
+                      <p className="text-[11px] sm:text-xs text-stone-500 dark:text-slate-400 mt-0.5">
                         Text-based PDFs up to 10 MB (works on phones and desktop)
                       </p>
                     </div>
@@ -399,20 +399,20 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
 
               {/* Animated Stepper Progress Bar */}
               {extracting && (
-                <div className="bg-stone-50 dark:bg-slate-900/90 p-4 sm:p-5 rounded-2xl border border-stone-200 dark:border-slate-800 space-y-3.5 animate-fade-in">
-                  <div className="flex items-center justify-between text-xs sm:text-sm font-semibold text-stone-700 dark:text-slate-300">
+                <div className="bg-stone-50 dark:bg-slate-900/90 p-3.5 sm:p-4 rounded-xl border border-stone-200 dark:border-slate-800 space-y-2.5 animate-fade-in">
+                  <div className="flex items-center justify-between text-xs font-semibold text-stone-700 dark:text-slate-300">
                     <div className="flex items-center space-x-2">
-                      <div className="w-2.5 h-2.5 rounded-full bg-[#5B3FE0] animate-ping" />
+                      <div className="w-2 h-2 rounded-full bg-[#5B3FE0] animate-ping" />
                       <span>Extraction Progress</span>
                     </div>
                     <span className="text-[#5B3FE0] dark:text-[#8266FA] font-mono font-bold">{stepLabels[extractStep]}</span>
                   </div>
 
                   {/* Connecting Stepper Track */}
-                  <div className="relative pt-1.5 pb-1">
-                    <div className="absolute top-4.5 left-4 right-4 h-1 bg-stone-200 dark:bg-slate-800 rounded-full z-0"></div>
+                  <div className="relative pt-1 pb-0.5">
+                    <div className="absolute top-4 left-4 right-4 h-1 bg-stone-200 dark:bg-slate-800 rounded-full z-0"></div>
                     <div
-                      className="absolute top-4.5 left-4 h-1 bg-[#5B3FE0] rounded-full z-0 stepper-bar-fill"
+                      className="absolute top-4 left-4 h-1 bg-[#5B3FE0] rounded-full z-0 stepper-bar-fill"
                       style={{ width: `calc(${(extractStep / (stepLabels.length - 1)) * 100}% - 16px)` }}
                     ></div>
                     <div className="relative z-10 flex justify-between">
@@ -420,20 +420,20 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
                         const isDone = idx < extractStep
                         const isCurrent = idx === extractStep
                         return (
-                          <div key={idx} className="flex flex-col items-center space-y-1 w-14 sm:w-16">
+                          <div key={idx} className="flex flex-col items-center space-y-1 w-12 sm:w-14">
                             <div
-                              className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
+                              className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
                                 isDone
-                                  ? 'bg-[#5B3FE0] text-white shadow-xs'
-                                  : isCurrent
-                                  ? 'bg-white dark:bg-[#1E293B] border-2 border-[#5B3FE0] text-[#5B3FE0] dark:text-[#8266FA] shadow-md ring-3 sm:ring-4 ring-[#5B3FE0]/20 animate-pulse-ring'
+                                    ? 'bg-[#5B3FE0] text-white shadow-xs'
+                                    : isCurrent
+                                  ? 'bg-white dark:bg-[#1E293B] border-2 border-[#5B3FE0] text-[#5B3FE0] dark:text-[#8266FA] shadow-sm ring-2 sm:ring-3 ring-[#5B3FE0]/20 animate-pulse-ring'
                                   : 'bg-stone-100 dark:bg-slate-800 border border-stone-300 dark:border-slate-700 text-stone-400 dark:text-slate-500'
                               }`}
                             >
                               {isDone ? '✓' : idx + 1}
                             </div>
                             <span
-                              className={`text-[11px] text-center truncate w-full ${
+                              className={`text-[10px] text-center truncate w-full ${
                                 isCurrent ? 'text-[#5B3FE0] dark:text-[#8266FA] font-bold' : 'text-stone-400 dark:text-slate-500'
                               }`}
                             >
@@ -453,7 +453,7 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
                   type="button"
                   onClick={handleStartExtraction}
                   disabled={!selectedFile || extracting}
-                  className="w-full py-2.5 sm:py-3 px-4 sm:px-5 btn-primary text-xs sm:text-sm font-semibold flex items-center justify-center space-x-2"
+                  className="w-full py-2 sm:py-2.5 px-4 btn-primary text-xs sm:text-sm font-semibold flex items-center justify-center space-x-2"
                 >
                   {extracting ? (
                     <>
@@ -470,10 +470,10 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
 
           {/* 3. VERIFICATION (AI) & MANUAL ENTRY FORM */}
           {(mode === 'verify' || mode === 'manual') && (
-            <form id="report-entry-form" onSubmit={handleSaveReport} className="space-y-4 sm:space-y-5">
+            <form id="report-entry-form" onSubmit={handleSaveReport} className="space-y-3.5 sm:space-y-4">
               {/* Note on Verification Screen */}
               {mode === 'verify' && (
-                <div className="bg-amber-50/90 border border-amber-200/80 rounded-2xl p-3.5 sm:p-4 text-xs sm:text-sm text-amber-900 dark:bg-amber-950/40 dark:border-amber-800/60 dark:text-amber-200 space-y-1">
+                <div className="bg-amber-50/90 border border-amber-200/80 rounded-xl p-3 sm:p-3.5 text-xs text-amber-900 dark:bg-amber-950/40 dark:border-amber-800/60 dark:text-amber-200 space-y-0.5">
                   <div className="flex items-center space-x-1.5 font-bold">
                     <span>⚠️</span>
                     <span>Review Before Saving</span>
@@ -485,27 +485,27 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
               )}
 
               {extractionNotice && (
-                <div className="p-3.5 sm:p-4 bg-violet-50 border border-violet-200 dark:bg-[#5B3FE0]/15 dark:border-[#5B3FE0]/30 dark:text-violet-300 rounded-2xl text-xs sm:text-sm text-violet-800 font-medium">
+                <div className="p-3 bg-violet-50 border border-violet-200 dark:bg-[#5B3FE0]/15 dark:border-[#5B3FE0]/30 dark:text-violet-300 rounded-xl text-xs font-medium">
                   {extractionNotice}
                 </div>
               )}
 
               {/* REPORT DETAILS SECTION */}
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-stone-600 dark:text-slate-400">
+                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-stone-600 dark:text-slate-400">
                     Report Details
                   </h4>
                   {!reportDate && mode === 'verify' && (
-                    <span className="text-xs font-semibold text-rose-500 dark:text-rose-400">
+                    <span className="text-[11px] font-semibold text-rose-500 dark:text-rose-400">
                       * Report date required before saving
                     </span>
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5 bg-stone-50/70 dark:bg-[#131B2E] p-3.5 sm:p-4 rounded-2xl border border-stone-200/80 dark:border-slate-800">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 bg-stone-50/70 dark:bg-[#131B2E] p-3 rounded-xl border border-stone-200/80 dark:border-slate-800">
                   <div className="space-y-1 text-left">
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 dark:text-slate-300">
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-600 dark:text-slate-300">
                       Laboratory Name {mode === 'verify' ? '' : '(optional)'}
                     </label>
                     <input
@@ -513,12 +513,12 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
                       value={labName}
                       onChange={(e) => setLabName(e.target.value)}
                       placeholder="e.g., Quest Diagnostics, City Labs"
-                      className="w-full px-3.5 py-2 sm:py-2.5 bg-white dark:bg-[#0B0F19] border border-stone-200 dark:border-slate-700 rounded-xl text-sm sm:text-base text-stone-900 dark:text-slate-100 placeholder-stone-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0]/30 focus:border-[#5B3FE0]"
+                      className="w-full px-3 py-1.5 sm:py-2 bg-white dark:bg-[#0B0F19] border border-stone-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-stone-900 dark:text-slate-100 placeholder-stone-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0]/30 focus:border-[#5B3FE0]"
                     />
                   </div>
 
                   <div className="space-y-1 text-left">
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 dark:text-slate-300">
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-600 dark:text-slate-300">
                       Report Date <span className="text-rose-500">*</span>
                     </label>
                     <input
@@ -526,7 +526,7 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
                       value={reportDate}
                       onChange={(e) => setReportDate(e.target.value)}
                       required
-                      className={`w-full px-3.5 py-2 sm:py-2.5 bg-white dark:bg-[#0B0F19] border rounded-xl text-sm sm:text-base text-stone-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0]/30 focus:border-[#5B3FE0] ${
+                      className={`w-full px-3 py-1.5 sm:py-2 bg-white dark:bg-[#0B0F19] border rounded-xl text-xs sm:text-sm text-stone-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0]/30 focus:border-[#5B3FE0] ${
                         !reportDate && mode === 'verify' ? 'border-rose-300 dark:border-rose-700/80' : 'border-stone-200 dark:border-slate-700'
                       }`}
                     />
@@ -535,31 +535,31 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
               </div>
 
               {/* Context-Aware Heading (Section I & User Instruction 8) */}
-              <div className="space-y-2.5">
+              <div className="space-y-2">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
-                  <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-stone-700 dark:text-slate-200">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-slate-200">
                     {mode === 'verify'
                       ? `Extracted Measurements (${rows.length})`
                       : `Report Measurements (${rows.length})`}
                   </h4>
-                  <span className="text-xs text-stone-400 dark:text-slate-500">Values can be numeric or categorical</span>
+                  <span className="text-[11px] text-stone-400 dark:text-slate-500">Values can be numeric or categorical</span>
                 </div>
 
                 {/* Measurements Editable Rows with Fixed 12-Column Responsive Grid */}
-                <div className="space-y-2.5">
+                <div className="space-y-2">
                   {rows.map((row, idx) => (
                     <div
                       key={row.id}
-                      className={`p-3 sm:p-4 bg-stone-50/50 dark:bg-[#131B2E]/60 border border-stone-200/90 dark:border-slate-800 rounded-2xl space-y-2.5 ${
+                      className={`p-2.5 sm:p-3 bg-stone-50/50 dark:bg-[#131B2E]/60 border border-stone-200/90 dark:border-slate-800 rounded-xl space-y-2 ${
                         focusNewRowId === row.id ? 'animate-slide-down' : 'animate-fade-in'
                       } transition-all duration-150 hover:border-stone-300 dark:hover:border-slate-700 hover:shadow-xs`}
                     >
-                      <div className="flex items-center justify-between text-xs sm:text-sm text-stone-500 dark:text-slate-400 font-medium">
-                        <span className="font-semibold text-xs sm:text-sm">Measurement #{idx + 1}</span>
+                      <div className="flex items-center justify-between text-xs text-stone-500 dark:text-slate-400 font-medium">
+                        <span className="font-semibold text-xs">Measurement #{idx + 1}</span>
                         <button
                           type="button"
                           onClick={() => handleRemoveRow(row.id)}
-                          className="text-stone-400 hover:text-rose-500 dark:text-slate-500 dark:hover:text-rose-400 text-xs sm:text-sm font-medium cursor-pointer p-0.5 transition-colors"
+                          className="text-stone-400 hover:text-rose-500 dark:text-slate-500 dark:hover:text-rose-400 text-xs font-medium cursor-pointer p-0.5 transition-colors"
                           title="Remove measurement"
                         >
                           Remove ✕
@@ -567,10 +567,10 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
                       </div>
 
                       {/* 12-column grid replacing broken col-span-1.5 with full readability */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-2.5">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-2">
                         {/* Test Name: 4 cols */}
                         <div className="sm:col-span-2 md:col-span-4">
-                          <label className="block text-[11px] uppercase font-bold text-stone-500 dark:text-slate-400 mb-0.5">
+                          <label className="block text-[10px] uppercase font-bold text-stone-500 dark:text-slate-400 mb-0.5">
                             Test Name
                           </label>
                           <input
@@ -584,13 +584,13 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
                             placeholder="e.g. Hemoglobin, WBC"
                             value={row.testName}
                             onChange={(e) => handleRowChange(row.id, 'testName', e.target.value)}
-                            className="w-full px-3 py-2 bg-white dark:bg-[#0B0F19] border border-stone-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-stone-900 dark:text-slate-100 placeholder-stone-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0]/30 focus:border-[#5B3FE0] transition-all"
+                            className="w-full px-2.5 py-1.5 bg-white dark:bg-[#0B0F19] border border-stone-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-stone-900 dark:text-slate-100 placeholder-stone-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0]/30 focus:border-[#5B3FE0] transition-all"
                           />
                         </div>
 
                         {/* Value: 2 cols */}
                         <div className="md:col-span-2">
-                          <label className="block text-[11px] uppercase font-bold text-stone-500 dark:text-slate-400 mb-0.5">
+                          <label className="block text-[10px] uppercase font-bold text-stone-500 dark:text-slate-400 mb-0.5">
                             Value
                           </label>
                           <input
@@ -598,13 +598,13 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
                             placeholder="13.8 / Borderline"
                             value={row.value}
                             onChange={(e) => handleRowChange(row.id, 'value', e.target.value)}
-                            className="w-full px-3 py-2 bg-white dark:bg-[#0B0F19] border border-stone-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-stone-900 dark:text-slate-100 placeholder-stone-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0]/30 focus:border-[#5B3FE0] transition-all"
+                            className="w-full px-2.5 py-1.5 bg-white dark:bg-[#0B0F19] border border-stone-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-stone-900 dark:text-slate-100 placeholder-stone-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0]/30 focus:border-[#5B3FE0] transition-all"
                           />
                         </div>
 
                         {/* Unit: 2 cols */}
                         <div className="md:col-span-2">
-                          <label className="block text-[11px] uppercase font-bold text-stone-500 dark:text-slate-400 mb-0.5">
+                          <label className="block text-[10px] uppercase font-bold text-stone-500 dark:text-slate-400 mb-0.5">
                             Unit
                           </label>
                           <input
@@ -612,13 +612,13 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
                             placeholder="g/dL, /µL"
                             value={row.unit}
                             onChange={(e) => handleRowChange(row.id, 'unit', e.target.value)}
-                            className="w-full px-3 py-2 bg-white dark:bg-[#0B0F19] border border-stone-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-stone-900 dark:text-slate-100 placeholder-stone-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0]/30 focus:border-[#5B3FE0] transition-all"
+                            className="w-full px-2.5 py-1.5 bg-white dark:bg-[#0B0F19] border border-stone-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-stone-900 dark:text-slate-100 placeholder-stone-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0]/30 focus:border-[#5B3FE0] transition-all"
                           />
                         </div>
 
                         {/* Ref Min: 2 cols */}
                         <div className="md:col-span-2">
-                          <label className="block text-[11px] uppercase font-bold text-stone-500 dark:text-slate-400 mb-0.5">
+                          <label className="block text-[10px] uppercase font-bold text-stone-500 dark:text-slate-400 mb-0.5">
                             Ref Min
                           </label>
                           <input
@@ -627,13 +627,13 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
                             placeholder="Min (13.0)"
                             value={row.refMin}
                             onChange={(e) => handleRowChange(row.id, 'refMin', e.target.value)}
-                            className="w-full px-3 py-2 bg-white dark:bg-[#0B0F19] border border-stone-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-stone-900 dark:text-slate-100 placeholder-stone-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0]/30 focus:border-[#5B3FE0] transition-all"
+                            className="w-full px-2.5 py-1.5 bg-white dark:bg-[#0B0F19] border border-stone-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-stone-900 dark:text-slate-100 placeholder-stone-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0]/30 focus:border-[#5B3FE0] transition-all"
                           />
                         </div>
 
                         {/* Ref Max: 2 cols */}
                         <div className="md:col-span-2">
-                          <label className="block text-[11px] uppercase font-bold text-stone-500 dark:text-slate-400 mb-0.5">
+                          <label className="block text-[10px] uppercase font-bold text-stone-500 dark:text-slate-400 mb-0.5">
                             Ref Max
                           </label>
                           <input
@@ -642,14 +642,14 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
                             placeholder="Max (17.0)"
                             value={row.refMax}
                             onChange={(e) => handleRowChange(row.id, 'refMax', e.target.value)}
-                            className="w-full px-3 py-2 bg-white dark:bg-[#0B0F19] border border-stone-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-stone-900 dark:text-slate-100 placeholder-stone-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0]/30 focus:border-[#5B3FE0] transition-all"
+                            className="w-full px-2.5 py-1.5 bg-white dark:bg-[#0B0F19] border border-stone-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-stone-900 dark:text-slate-100 placeholder-stone-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0]/30 focus:border-[#5B3FE0] transition-all"
                           />
                         </div>
                       </div>
 
                       {/* Reference Range Text for threshold ranges like <200 or qualitative notes */}
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2.5 pt-0.5">
-                        <label className="text-xs text-stone-600 dark:text-slate-400 font-medium shrink-0">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 pt-0.5">
+                        <label className="text-[11px] text-stone-600 dark:text-slate-400 font-medium shrink-0">
                           Range / Text Note (optional):
                         </label>
                         <input
@@ -657,7 +657,7 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
                           placeholder="e.g. <200, >40, Negative"
                           value={row.refText || ''}
                           onChange={(e) => handleRowChange(row.id, 'refText', e.target.value)}
-                          className="w-full px-3 py-1.5 bg-white dark:bg-[#0B0F19] border border-stone-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-stone-900 dark:text-slate-100 placeholder-stone-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0]/30 focus:border-[#5B3FE0] transition-all"
+                          className="w-full px-2.5 py-1 bg-white dark:bg-[#0B0F19] border border-stone-200 dark:border-slate-700 rounded-xl text-xs text-stone-900 dark:text-slate-100 placeholder-stone-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0]/30 focus:border-[#5B3FE0] transition-all"
                         />
                       </div>
                     </div>
@@ -668,7 +668,7 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
                 <button
                   type="button"
                   onClick={handleAddRow}
-                  className="w-full py-2.5 sm:py-3 px-4 sm:px-5 border border-dashed border-stone-300 dark:border-slate-700 hover:border-[#5B3FE0] dark:hover:border-[#5B3FE0] rounded-2xl text-xs sm:text-sm font-semibold text-stone-600 dark:text-slate-300 hover:text-[#5B3FE0] dark:hover:text-[#5B3FE0] bg-white dark:bg-[#131B2E]/40 hover:bg-[#5B3FE0]/5 dark:hover:bg-[#5B3FE0]/10 transition-all duration-150 cursor-pointer btn-press flex items-center justify-center space-x-2"
+                  className="w-full py-2 sm:py-2.5 px-4 border border-dashed border-stone-300 dark:border-slate-700 hover:border-[#5B3FE0] dark:hover:border-[#5B3FE0] rounded-xl text-xs font-semibold text-stone-600 dark:text-slate-300 hover:text-[#5B3FE0] dark:hover:text-[#5B3FE0] bg-white dark:bg-[#131B2E]/40 hover:bg-[#5B3FE0]/5 dark:hover:bg-[#5B3FE0]/10 transition-all duration-150 cursor-pointer btn-press flex items-center justify-center space-x-1.5"
                 >
                   <span>+ Add Another Measurement</span>
                 </button>
@@ -678,12 +678,12 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
         </div>
 
         {/* Modal Footer */}
-        <div className="px-5 py-3 sm:px-6 sm:py-3.5 border-t border-stone-100 dark:border-slate-800 flex items-center justify-between bg-stone-50/50 dark:bg-[#0E1526] shrink-0">
+        <div className="px-4 py-2.5 sm:px-5 sm:py-3 border-t border-stone-100 dark:border-slate-800 flex items-center justify-between bg-stone-50/50 dark:bg-[#0E1526] shrink-0">
           {mode === 'select' && (
             <button
               type="button"
               onClick={handleClose}
-              className="btn-secondary ml-auto px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-stone-700 dark:text-slate-200 bg-white dark:bg-[#131B2E] border border-stone-200 dark:border-slate-700 rounded-xl cursor-pointer"
+              className="btn-secondary ml-auto px-4 py-1.5 sm:py-2 text-xs font-semibold text-stone-700 dark:text-slate-200 bg-white dark:bg-[#131B2E] border border-stone-200 dark:border-slate-700 rounded-xl cursor-pointer"
             >
               Close
             </button>
@@ -694,14 +694,14 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
               <button
                 type="button"
                 onClick={() => setMode('select')}
-                className="btn-secondary px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-stone-700 dark:text-slate-200 bg-white dark:bg-[#131B2E] border border-stone-200 dark:border-slate-700 rounded-xl cursor-pointer"
+                className="btn-secondary px-3.5 sm:px-4 py-1.5 sm:py-2 text-xs font-semibold text-stone-700 dark:text-slate-200 bg-white dark:bg-[#131B2E] border border-stone-200 dark:border-slate-700 rounded-xl cursor-pointer"
               >
                 ← Back
               </button>
               <button
                 type="button"
                 onClick={handleClose}
-                className="btn-ghost px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-stone-500 hover:text-stone-800 dark:text-slate-400 dark:hover:text-slate-200 cursor-pointer rounded-xl"
+                className="btn-ghost px-3 py-1.5 sm:py-2 text-xs font-semibold text-stone-500 hover:text-stone-800 dark:text-slate-400 dark:hover:text-slate-200 cursor-pointer rounded-xl"
               >
                 Cancel
               </button>
@@ -716,7 +716,7 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
                   if (mode === 'verify') setMode('upload')
                   else setMode('select')
                 }}
-                className="btn-secondary px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold text-stone-700 dark:text-slate-200 bg-white dark:bg-[#131B2E] border border-stone-200 dark:border-slate-700 rounded-xl cursor-pointer"
+                className="btn-secondary px-3.5 sm:px-4 py-1.5 sm:py-2 text-xs font-semibold text-stone-700 dark:text-slate-200 bg-white dark:bg-[#131B2E] border border-stone-200 dark:border-slate-700 rounded-xl cursor-pointer"
               >
                 ← Back
               </button>
@@ -724,7 +724,7 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="btn-ghost px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-stone-500 hover:text-stone-800 dark:text-slate-400 dark:hover:text-slate-200 cursor-pointer rounded-xl"
+                  className="btn-ghost px-3 py-1.5 sm:py-2 text-xs font-semibold text-stone-500 hover:text-stone-800 dark:text-slate-400 dark:hover:text-slate-200 cursor-pointer rounded-xl"
                 >
                   Cancel
                 </button>
@@ -732,7 +732,7 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
                   type="submit"
                   form="report-entry-form"
                   disabled={isSubmitting}
-                  className="btn-primary px-4 sm:px-5 py-2 sm:py-2.5 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-xs transition-all flex items-center space-x-1.5 cursor-pointer disabled:opacity-60"
+                  className="btn-primary px-3.5 sm:px-4.5 py-1.5 sm:py-2 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-xs transition-all flex items-center space-x-1.5 cursor-pointer disabled:opacity-60"
                 >
                   {isSubmitting ? (
                     <>

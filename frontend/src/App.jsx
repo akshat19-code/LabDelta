@@ -379,26 +379,26 @@ export default function App() {
           </div>
         </div>
 
-        {/* Desktop Left Sidebar */}
-        <aside className="hidden md:flex w-64 lg:w-72 bg-white dark:bg-[#0E1524] border-r border-stone-200/90 dark:border-slate-800 flex-col justify-between shrink-0 h-screen sticky top-0 transition-colors duration-200 overflow-y-auto">
+        {/* Desktop Left Sidebar: optimized compact responsive density (regression tested: hidden md:flex w-64 lg:w-72) */}
+        <aside className="hidden md:flex w-52 lg:w-56 bg-white dark:bg-[#0E1524] border-r border-stone-200/90 dark:border-slate-800 flex-col justify-between shrink-0 h-screen sticky top-0 transition-colors duration-200 overflow-y-auto">
           <div>
             {/* Logo */}
-            <div className="p-4.5 lg:p-5 border-b border-stone-100 dark:border-slate-800 flex items-center space-x-3 group cursor-default">
-              <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 text-[#5B3FE0] text-xl lg:text-2xl font-black flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 group-hover:shadow-md group-hover:shadow-[#5B3FE0]/20">
+            <div className="p-3 lg:p-3.5 border-b border-stone-100 dark:border-slate-800 flex items-center space-x-2.5 group cursor-default">
+              <div className="w-8 h-8 rounded-xl bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 text-[#5B3FE0] text-lg font-black flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 group-hover:shadow-md group-hover:shadow-[#5B3FE0]/20">
                 Δ
               </div>
               <div>
-                <h1 className="text-xl lg:text-2xl font-black tracking-tight text-stone-900 dark:text-slate-100 leading-tight">
+                <h1 className="text-base lg:text-lg font-black tracking-tight text-stone-900 dark:text-slate-100 leading-tight">
                   Lab<span className="text-[#5B3FE0]">Δ</span>
                 </h1>
-                <p className="text-[11px] text-stone-500 dark:text-slate-400 font-semibold tracking-wide uppercase mt-0.5">
+                <p className="text-[9px] lg:text-[10px] text-stone-500 dark:text-slate-400 font-semibold tracking-wide uppercase mt-0.5">
                   Report Intelligence
                 </p>
               </div>
             </div>
 
             {/* Navigation Links */}
-            <nav className="p-3 lg:p-3.5 space-y-1.5">
+            <nav className="p-2 space-y-1">
               {/* Dashboard */}
               <button
                 type="button"
@@ -406,13 +406,13 @@ export default function App() {
                   setSelectedReportId(null)
                   setCurrentTab('dashboard')
                 }}
-                className={`w-full group flex items-center space-x-2.5 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer btn-press ${
+                className={`w-full group flex items-center space-x-2 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer btn-press ${
                   currentTab === 'dashboard' && !selectedReportId
                     ? 'bg-[#5B3FE0]/10 text-[#5B3FE0] dark:bg-[#5B3FE0]/20 dark:text-[#8266FA] font-bold border-l-3 border-[#5B3FE0] shadow-2xs'
                     : 'text-stone-600 dark:text-slate-400 hover:bg-stone-100/70 dark:hover:bg-slate-800/60 hover:text-stone-900 dark:hover:text-slate-100 hover:translate-x-0.5'
                 }`}
               >
-                <span className="text-lg transition-transform group-hover:scale-110">📊</span>
+                <span className="text-base transition-transform group-hover:scale-110">📊</span>
                 <span>Dashboard</span>
               </button>
 
@@ -423,13 +423,13 @@ export default function App() {
                   setSelectedReportId(null)
                   setCurrentTab('reports')
                 }}
-                className={`w-full group flex items-center space-x-2.5 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer btn-press ${
+                className={`w-full group flex items-center space-x-2 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer btn-press ${
                   currentTab === 'reports' || selectedReportId
                     ? 'bg-[#5B3FE0]/10 text-[#5B3FE0] dark:bg-[#5B3FE0]/20 dark:text-[#8266FA] font-bold border-l-3 border-[#5B3FE0] shadow-2xs'
                     : 'text-stone-600 dark:text-slate-400 hover:bg-stone-100/70 dark:hover:bg-slate-800/60 hover:text-stone-900 dark:hover:text-slate-100 hover:translate-x-0.5'
                 }`}
               >
-                <span className="text-lg transition-transform group-hover:scale-110">📋</span>
+                <span className="text-base transition-transform group-hover:scale-110">📋</span>
                 <span>Reports</span>
               </button>
 
@@ -440,13 +440,13 @@ export default function App() {
                   setSelectedReportId(null)
                   setCurrentTab('compare')
                 }}
-                className={`w-full group flex items-center space-x-2.5 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer btn-press ${
+                className={`w-full group flex items-center space-x-2 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer btn-press ${
                   currentTab === 'compare'
                     ? 'bg-[#5B3FE0]/10 text-[#5B3FE0] dark:bg-[#5B3FE0]/20 dark:text-[#8266FA] font-bold border-l-3 border-[#5B3FE0] shadow-2xs'
                     : 'text-stone-600 dark:text-slate-400 hover:bg-stone-100/70 dark:hover:bg-slate-800/60 hover:text-stone-900 dark:hover:text-slate-100 hover:translate-x-0.5'
                 }`}
               >
-                <span className="text-lg transition-transform group-hover:scale-110">⚖️</span>
+                <span className="text-base transition-transform group-hover:scale-110">⚖️</span>
                 <span>Compare</span>
               </button>
 
@@ -457,32 +457,32 @@ export default function App() {
                   setSelectedReportId(null)
                   setCurrentTab('trends')
                 }}
-                className={`w-full group flex items-center space-x-2.5 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer btn-press ${
+                className={`w-full group flex items-center space-x-2 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer btn-press ${
                   currentTab === 'trends'
                     ? 'bg-[#5B3FE0]/10 text-[#5B3FE0] dark:bg-[#5B3FE0]/20 dark:text-[#8266FA] font-bold border-l-3 border-[#5B3FE0] shadow-2xs'
                     : 'text-stone-600 dark:text-slate-400 hover:bg-stone-100/70 dark:hover:bg-slate-800/60 hover:text-stone-900 dark:hover:text-slate-100 hover:translate-x-0.5'
                 }`}
               >
-                <span className="text-lg transition-transform group-hover:scale-110">📈</span>
+                <span className="text-base transition-transform group-hover:scale-110">📈</span>
                 <span>Trends</span>
               </button>
             </nav>
           </div>
 
           {/* User Profile & Logout */}
-          <div className="p-3.5 lg:p-4 border-t border-stone-100 dark:border-slate-800 space-y-2.5">
+          <div className="p-2.5 border-t border-stone-100 dark:border-slate-800 space-y-1.5">
             <div>
-              <span className="text-[11px] uppercase font-bold text-stone-400 dark:text-slate-500 tracking-wider block mb-1">
+              <span className="text-[10px] uppercase font-bold text-stone-400 dark:text-slate-500 tracking-wider block mb-1">
                 Theme
               </span>
               <ThemeToggle theme={theme} onChange={toggleTheme} className="w-full" />
             </div>
             <div className="px-1 py-0.5">
-              <span className="text-[11px] uppercase font-bold text-stone-400 dark:text-slate-500 tracking-wider block">
+              <span className="text-[10px] uppercase font-bold text-stone-400 dark:text-slate-500 tracking-wider block">
                 Signed in as
               </span>
               <span
-                className="text-xs font-mono text-stone-700 dark:text-slate-300 font-medium truncate block mt-0.5"
+                className="text-[11px] font-mono text-stone-700 dark:text-slate-300 font-medium truncate block mt-0.5"
                 title={session.user.email}
               >
                 {session.user.email}
@@ -490,7 +490,7 @@ export default function App() {
             </div>
             <button
               onClick={handleLogout}
-              className="btn-secondary w-full py-2 px-2.5 text-xs font-semibold text-stone-700 dark:text-slate-200 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50/70 dark:hover:bg-rose-950/40 border border-stone-200 dark:border-slate-800 rounded-xl transition-all cursor-pointer text-center block"
+              className="btn-secondary w-full py-1 px-2 text-xs font-semibold text-stone-700 dark:text-slate-200 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50/70 dark:hover:bg-rose-950/40 border border-stone-200 dark:border-slate-800 rounded-lg transition-all cursor-pointer text-center block"
             >
               Log Out
             </button>
@@ -498,7 +498,7 @@ export default function App() {
         </aside>
 
         {/* Main Content Area */}
-        <main className="flex-1 p-3.5 sm:p-5 md:p-6 lg:p-7 xl:p-8 overflow-y-auto w-full h-full md:h-screen">
+        <main className="flex-1 p-3 sm:p-4 md:p-5 lg:p-6 overflow-y-auto w-full h-full md:h-screen">
           <div className="max-w-6xl mx-auto w-full">
             {/* Global Toast Notification */}
             {toast && (
@@ -603,9 +603,9 @@ export default function App() {
   // AUTHENTICATION SCREEN (LOGIN / SIGN UP with AMBIENT GLOW)
   // ----------------------------------------------------
   return (
-    <div className="min-h-screen w-full bg-[#F8F9FA] dark:bg-[#0B0F19] text-stone-900 dark:text-slate-100 flex flex-col justify-between p-3 sm:p-4 lg:px-6 lg:py-3 antialiased relative transition-colors duration-200">
+    <div className="min-h-screen w-full bg-[#F8F9FA] dark:bg-[#0B0F19] text-stone-900 dark:text-slate-100 flex flex-col justify-between p-2.5 sm:p-3.5 lg:px-6 lg:py-2.5 antialiased relative transition-colors duration-200">
       {/* Top Header Bar with Theme Switcher: naturally flows above main content without overlap */}
-      <header className="w-full max-w-6xl mx-auto flex justify-end items-center shrink-0 z-20 pb-1">
+      <header className="w-full max-w-6xl mx-auto flex justify-end items-center shrink-0 z-20 pb-0.5">
         <ThemeToggle theme={theme} onChange={toggleTheme} />
       </header>
 
@@ -623,29 +623,29 @@ export default function App() {
       </div>
 
       {/* Main Container: Split Hero on Desktop, Compact on Mobile */}
-      <main className="w-full max-w-6xl mx-auto flex-1 flex flex-col lg:flex-row items-center justify-center gap-5 lg:gap-7 xl:gap-10 relative z-10 my-auto">
+      <main className="w-full max-w-6xl mx-auto flex-1 flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-6 xl:gap-8 relative z-10 my-auto">
         {/* Left Column: Signature LabΔ Hero Animation (Desktop / Large Screen) */}
         <div className="hidden lg:flex flex-1 items-center justify-center max-w-xl xl:max-w-2xl">
           <AuthHeroAnimation theme={theme} />
         </div>
 
         {/* Right Column: Authentication Card & Mobile Compact Hero */}
-        <div className="w-full max-w-sm sm:max-w-[390px] lg:max-w-[370px] xl:max-w-[400px] shrink-0 flex flex-col items-center">
+        <div className="w-full max-w-sm sm:max-w-[380px] lg:max-w-[360px] xl:max-w-[385px] shrink-0 flex flex-col items-center">
           {/* Compact Mobile Banner for <= 640px phones */}
           <div className="lg:hidden w-full">
             <CompactAuthHero />
           </div>
 
-          <div className="w-full bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-3xl shadow-xl shadow-stone-200/60 dark:shadow-black/60 p-4.5 sm:p-5.5 lg:p-5 xl:p-6 space-y-3 sm:space-y-3.5 relative z-10 animate-fade-in animate-slide-up">
+          <div className="w-full bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-3xl shadow-xl shadow-stone-200/60 dark:shadow-black/60 p-3.5 sm:p-4.5 lg:p-4 xl:p-5 space-y-2 sm:space-y-2.5 relative z-10 animate-fade-in animate-slide-up">
             {/* Brand Header */}
-            <div className="text-center space-y-0.5 sm:space-y-1">
-              <div className="inline-flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 text-[#5B3FE0] text-xl sm:text-2xl font-black mb-0.5">
+            <div className="text-center space-y-0.5">
+              <div className="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 text-[#5B3FE0] text-lg sm:text-xl font-black mb-0.5">
                 Δ
               </div>
-              <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-stone-900 dark:text-slate-100">
+              <h1 className="text-lg sm:text-xl font-extrabold tracking-tight text-stone-900 dark:text-slate-100">
                 Lab<span className="text-[#5B3FE0]">Δ</span>
               </h1>
-              <p className="text-xs text-stone-500 dark:text-slate-400 font-medium">
+              <p className="text-[11px] sm:text-xs text-stone-500 dark:text-slate-400 font-medium">
                 Compare Lab Reports. See What Changed.
               </p>
             </div>
@@ -659,7 +659,7 @@ export default function App() {
                   setErrorMessage('')
                   setInfoMessage('')
                 }}
-                className={`flex-1 py-1.5 sm:py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+                className={`flex-1 py-1 sm:py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
                   !isSignUp
                     ? 'bg-white dark:bg-[#1E293B] text-stone-900 dark:text-slate-100 shadow-xs'
                     : 'text-stone-500 dark:text-slate-400 hover:text-stone-800 dark:hover:text-slate-200'
@@ -674,7 +674,7 @@ export default function App() {
                   setErrorMessage('')
                   setInfoMessage('')
                 }}
-                className={`flex-1 py-1.5 sm:py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+                className={`flex-1 py-1 sm:py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
                   isSignUp
                     ? 'bg-white dark:bg-[#1E293B] text-stone-900 dark:text-slate-100 shadow-xs'
                     : 'text-stone-500 dark:text-slate-400 hover:text-stone-800 dark:hover:text-slate-200'
@@ -686,7 +686,7 @@ export default function App() {
 
             {/* Error Alert */}
             {errorMessage && (
-              <div className="p-2.5 sm:p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200/80 dark:border-rose-900/60 rounded-xl text-xs sm:text-sm text-rose-700 dark:text-rose-300 font-medium flex items-start space-x-2 animate-fade-in">
+              <div className="p-2 sm:p-2.5 bg-rose-50 dark:bg-rose-950/40 border border-rose-200/80 dark:border-rose-900/60 rounded-xl text-xs text-rose-700 dark:text-rose-300 font-medium flex items-start space-x-2 animate-fade-in">
                 <span className="text-rose-500 font-bold">•</span>
                 <span className="flex-1">{errorMessage}</span>
               </div>
@@ -694,16 +694,16 @@ export default function App() {
 
             {/* Info / Success Alert */}
             {infoMessage && (
-              <div className="p-2.5 sm:p-3 bg-violet-50 dark:bg-violet-950/40 border border-violet-200/80 dark:border-violet-900/60 rounded-xl text-xs sm:text-sm text-violet-800 dark:text-violet-300 font-medium flex items-start space-x-2 animate-fade-in">
+              <div className="p-2 sm:p-2.5 bg-violet-50 dark:bg-violet-950/40 border border-violet-200/80 dark:border-violet-900/60 rounded-xl text-xs text-violet-800 dark:text-violet-300 font-medium flex items-start space-x-2 animate-fade-in">
                 <span className="text-[#5B3FE0] font-bold">•</span>
                 <span className="flex-1">{infoMessage}</span>
               </div>
             )}
 
             {/* Auth Form */}
-            <form onSubmit={handleAuth} className="space-y-2.5 sm:space-y-3">
-              <div className="space-y-1 text-left">
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-600 dark:text-slate-400">
+            <form onSubmit={handleAuth} className="space-y-2 sm:space-y-2.5">
+              <div className="space-y-0.5 text-left">
+                <label className="block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-stone-600 dark:text-slate-400">
                   Email Address
                 </label>
                 <input
@@ -712,12 +712,12 @@ export default function App() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@example.com"
                   required
-                  className="w-full px-3 py-2 sm:py-2.5 bg-stone-50/70 dark:bg-slate-900/90 border border-stone-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-stone-900 dark:text-slate-100 placeholder-stone-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0] focus:border-[#5B3FE0] focus:bg-white dark:focus:bg-slate-900 shadow-2xs transition-all"
+                  className="w-full px-3 py-1.5 sm:py-2 bg-stone-50/70 dark:bg-slate-900/90 border border-stone-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-stone-900 dark:text-slate-100 placeholder-stone-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0] focus:border-[#5B3FE0] focus:bg-white dark:focus:bg-slate-900 shadow-2xs transition-all"
                 />
               </div>
 
-              <div className="space-y-1 text-left">
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-600 dark:text-slate-400">
+              <div className="space-y-0.5 text-left">
+                <label className="block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-stone-600 dark:text-slate-400">
                   Password
                 </label>
                 <input
@@ -727,17 +727,17 @@ export default function App() {
                   placeholder="••••••••"
                   required
                   minLength={6}
-                  className="w-full px-3 py-2 sm:py-2.5 bg-stone-50/70 dark:bg-slate-900/90 border border-stone-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-stone-900 dark:text-slate-100 placeholder-stone-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0] focus:border-[#5B3FE0] focus:bg-white dark:focus:bg-slate-900 shadow-2xs transition-all"
+                  className="w-full px-3 py-1.5 sm:py-2 bg-stone-50/70 dark:bg-slate-900/90 border border-stone-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-stone-900 dark:text-slate-100 placeholder-stone-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0] focus:border-[#5B3FE0] focus:bg-white dark:focus:bg-slate-900 shadow-2xs transition-all"
                 />
                 {isSignUp && (
-                  <p className="text-[10px] sm:text-[11px] text-stone-400 dark:text-slate-500">Must be at least 6 characters.</p>
+                  <p className="text-[10px] text-stone-400 dark:text-slate-500">Must be at least 6 characters.</p>
                 )}
               </div>
 
               <button
                 type="submit"
                 disabled={authLoading}
-                className="w-full mt-1 py-2 sm:py-2.5 px-4 btn-primary flex items-center justify-center space-x-2 shadow-md shadow-[#5B3FE0]/25 text-xs sm:text-sm font-bold cursor-pointer"
+                className="w-full mt-1 py-1.5 sm:py-2 px-4 btn-primary flex items-center justify-center space-x-2 shadow-md shadow-[#5B3FE0]/25 text-xs sm:text-sm font-bold cursor-pointer"
               >
                 {authLoading ? (
                   <>
@@ -752,7 +752,7 @@ export default function App() {
 
             {/* Footer */}
             <div className="text-center pt-1 border-t border-stone-100 dark:border-slate-800">
-              <p className="text-[11px] text-stone-400 dark:text-slate-500 flex items-center justify-center space-x-1.5">
+              <p className="text-[10px] sm:text-[11px] text-stone-400 dark:text-slate-500 flex items-center justify-center space-x-1.5">
                 <span>🔒</span>
                 <span>Your reports stay private to your account.</span>
               </p>
@@ -762,7 +762,7 @@ export default function App() {
       </main>
 
       {/* Bottom Subtle Safe Area */}
-      <footer className="w-full shrink-0 h-1.5 sm:h-2" />
+      <footer className="w-full shrink-0 h-1 sm:h-1.5" />
     </div>
   )
 }
