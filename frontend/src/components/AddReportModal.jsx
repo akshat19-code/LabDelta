@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { handleSpotlightMouseMove } from '../lib/spotlight'
 import { normalizeTestName } from '../lib/normalization'
+import { checkForDuplicateReport } from '../lib/duplicateDetection'
 import { useReportsData } from '../context/ReportsContext'
 
 const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || (import.meta.env.DEV ? 'http://127.0.0.1:8000' : '')).replace(/\/$/, '')
@@ -24,6 +25,7 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [extractionNotice, setExtractionNotice] = useState('')
+  const [duplicateWarning, setDuplicateWarning] = useState(null)
 
   const fileInputRef = useRef(null)
   const [focusNewRowId, setFocusNewRowId] = useState(null)
@@ -31,6 +33,7 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
   if (!isOpen) return null
 
   const handleAddRow = () => {
+    if (duplicateWarning) setDuplicateWarning(null)
     const newId = Date.now() + Math.random()
     setFocusNewRowId(newId)
     setRows((prev) => [
@@ -40,6 +43,7 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
   }
 
   const handleRemoveRow = (id) => {
+    if (duplicateWarning) setDuplicateWarning(null)
     if (rows.length === 1) {
       setRows([{ id: Date.now(), testName: '', value: '', unit: '', refMin: '', refMax: '', refText: '' }])
       return
@@ -48,6 +52,7 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
   }
 
   const handleRowChange = (id, field, val) => {
+    if (duplicateWarning) setDuplicateWarning(null)
     setRows((prev) =>
       prev.map((r) => (r.id === id ? { ...r, [field]: val } : r))
     )
@@ -60,6 +65,7 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
     setExtractStep(0)
     setErrorMessage('')
     setExtractionNotice('')
+    setDuplicateWarning(null)
     setSourceType('manual')
     setRows([{ id: 1, testName: '', value: '', unit: '', refMin: '', refMax: '', refText: '' }])
     onClose()
@@ -165,8 +171,10 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
   }
 
   // Save Report & Measurements to Supabase
-  const handleSaveReport = async (e) => {
-    e.preventDefault()
+  const handleSaveReport = async (e, forceDuplicateSave = false) => {
+    if (e && e.preventDefault) {
+      e.preventDefault()
+    }
     setErrorMessage('')
 
     if (!reportDate) {
@@ -191,6 +199,26 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
     setIsSubmitting(true)
 
     try {
+      // Check for exact duplicate report unless explicitly bypassed via "Save Duplicate Anyway"
+      if (!forceDuplicateSave) {
+        const { isDuplicate } = await checkForDuplicateReport({
+          supabase,
+          userId,
+          reportDate,
+          labName,
+          validRows,
+        })
+
+        if (isDuplicate) {
+          const labDisplay = labName && labName.trim() ? `from ${labName.trim()} ` : ''
+          setDuplicateWarning({
+            message: `An identical report ${labDisplay}on ${reportDate} with the same measurements already exists in your account.`,
+          })
+          setIsSubmitting(false)
+          return
+        }
+      }
+
       // 1. Insert Report
       const { data: repData, error: repError } = await supabase
         .from('reports')
@@ -239,6 +267,7 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
       if (measError) throw measError
 
       // Close modal and notify
+      setDuplicateWarning(null)
       handleClose()
       if (refreshData) {
         refreshData()
@@ -293,6 +322,40 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
             <div className="p-3 sm:p-3.5 bg-rose-50 dark:bg-rose-950/40 border border-rose-200/80 dark:border-rose-900/60 rounded-xl text-xs sm:text-sm text-rose-700 dark:text-rose-300 font-medium flex items-start space-x-2 animate-fade-in">
               <span className="text-rose-500 font-bold shrink-0">•</span>
               <span className="flex-1 leading-relaxed">{errorMessage}</span>
+            </div>
+          )}
+
+          {/* Amber Duplicate Report Warning */}
+          {duplicateWarning && (
+            <div className="p-3 sm:p-3.5 bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700/60 rounded-xl text-xs text-amber-800 dark:text-amber-200 space-y-2.5 animate-fade-in shadow-2xs">
+              <div className="flex items-start space-x-2.5">
+                <span className="text-amber-600 dark:text-amber-400 font-bold text-sm shrink-0 mt-0.5">⚠️</span>
+                <div className="flex-1 space-y-0.5">
+                  <h4 className="font-bold text-stone-900 dark:text-slate-100 text-xs sm:text-sm">
+                    Duplicate report detected
+                  </h4>
+                  <p className="text-[11px] sm:text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
+                    {duplicateWarning.message}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center justify-end space-x-2 pt-1 border-t border-amber-200/60 dark:border-amber-800/40">
+                <button
+                  type="button"
+                  onClick={() => setDuplicateWarning(null)}
+                  className="px-3 py-1.5 bg-white dark:bg-slate-800 border border-amber-300/80 dark:border-amber-700 text-stone-700 dark:text-slate-300 rounded-xl text-xs font-semibold hover:bg-amber-50/50 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                >
+                  Review / Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSaveReport(null, true)}
+                  disabled={isSubmitting}
+                  className="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold shadow-xs transition-colors cursor-pointer disabled:opacity-60"
+                >
+                  Save Duplicate Anyway
+                </button>
+              </div>
             </div>
           )}
 
@@ -511,7 +574,10 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
                     <input
                       type="text"
                       value={labName}
-                      onChange={(e) => setLabName(e.target.value)}
+                      onChange={(e) => {
+                        if (duplicateWarning) setDuplicateWarning(null)
+                        setLabName(e.target.value)
+                      }}
                       placeholder="e.g., Quest Diagnostics, City Labs"
                       className="w-full px-3 py-1.5 sm:py-2 bg-white dark:bg-[#0B0F19] border border-stone-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-stone-900 dark:text-slate-100 placeholder-stone-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0]/30 focus:border-[#5B3FE0]"
                     />
@@ -524,7 +590,10 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
                     <input
                       type="date"
                       value={reportDate}
-                      onChange={(e) => setReportDate(e.target.value)}
+                      onChange={(e) => {
+                        if (duplicateWarning) setDuplicateWarning(null)
+                        setReportDate(e.target.value)
+                      }}
                       required
                       className={`w-full px-3 py-1.5 sm:py-2 bg-white dark:bg-[#0B0F19] border rounded-xl text-xs sm:text-sm text-stone-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0]/30 focus:border-[#5B3FE0] ${
                         !reportDate && mode === 'verify' ? 'border-rose-300 dark:border-rose-700/80' : 'border-stone-200 dark:border-slate-700'
