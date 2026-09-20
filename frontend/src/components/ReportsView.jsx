@@ -148,18 +148,6 @@ export default function ReportsView({ onOpenAddReport, onSelectReport, userId, s
           </div>
         </div>
         <div className="flex items-center space-x-2">
-          {hasDemoReports && (
-            <button
-              type="button"
-              onClick={handleResetDemo}
-              disabled={loadingDemo}
-              title="Reset demo reports with clean submission dataset"
-              className="btn-secondary inline-flex items-center justify-center space-x-1.5 px-3 py-1.5 sm:py-2 text-xs font-semibold rounded-xl shadow-xs cursor-pointer"
-            >
-              <span>🔄</span>
-              <span className="hidden sm:inline">Reset Demo</span>
-            </button>
-          )}
           <button
             onClick={onOpenAddReport}
             className="btn-primary inline-flex items-center justify-center space-x-1.5 px-3.5 py-1.5 sm:py-2 text-white text-xs font-semibold rounded-xl shadow-xs cursor-pointer"

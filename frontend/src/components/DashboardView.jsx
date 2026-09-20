@@ -243,8 +243,8 @@ export default function DashboardView({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          {/* Demo Data CTA — Load or Reset */}
-          {!demoLoaded ? (
+          {/* Demo Data CTA — only displayed before demo data exists */}
+          {!demoLoaded && (
             <button
               type="button"
               onClick={handleLoadDemo}
@@ -261,26 +261,6 @@ export default function DashboardView({
                 <>
                   <span className="inline-block transition-transform group-hover:scale-125 duration-200">✨</span>
                   <span>Explore Demo</span>
-                </>
-              )}
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={handleResetDemo}
-              disabled={loadingDemo}
-              className="btn-secondary group inline-flex items-center justify-center space-x-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 text-xs font-semibold shadow-xs cursor-pointer"
-              title="Reset demo reports with clean submission dataset"
-            >
-              {loadingDemo ? (
-                <>
-                  <div className="w-3 h-3 border-2 border-[#5B3FE0] border-t-transparent rounded-full animate-spin"></div>
-                  <span>Resetting...</span>
-                </>
-              ) : (
-                <>
-                  <span className="inline-block transition-transform group-hover:rotate-180 duration-300">🔄</span>
-                  <span>Reset Demo</span>
                 </>
               )}
             </button>
