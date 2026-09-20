@@ -62,7 +62,7 @@ export default function AuthHeroAnimation({ theme }) {
   return (
     <div
       ref={containerRef}
-      className="w-full max-w-2xl relative select-none"
+      className="w-full max-w-xl xl:max-w-2xl relative select-none"
       style={{
         transform: `translate3d(${pointerOffset.x}px, ${pointerOffset.y}px, 0)`,
         transition: 'transform 0.15s ease-out',
@@ -71,33 +71,33 @@ export default function AuthHeroAnimation({ theme }) {
       {/* Background Ambient Glow & Greek Delta Motif */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden -z-10 flex items-center justify-center">
         <div className="w-96 h-96 rounded-full bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/15 blur-3xl transform -translate-y-6" />
-        <div className="absolute text-stone-200/40 dark:text-[#5B3FE0]/5 font-black text-[220px] select-none -translate-y-4">
+        <div className="absolute text-stone-200/40 dark:text-[#5B3FE0]/5 font-black text-[200px] xl:text-[220px] select-none -translate-y-4">
           Δ
         </div>
       </div>
 
       {/* Visual Workflow Header Eyebrow */}
-      <div className="text-center mb-6 space-y-1">
+      <div className="text-center mb-4 sm:mb-5 space-y-1">
         <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 border border-[#5B3FE0]/20 text-[#5B3FE0] dark:text-[#8266FA] text-xs font-bold uppercase tracking-wider">
           <span>Intelligence Pipeline</span>
           <span>•</span>
           <span>Automated Δ Comparison</span>
         </div>
-        <h2 className="text-xl sm:text-2xl font-black text-stone-800 dark:text-slate-100 tracking-tight">
+        <h2 className="text-lg sm:text-xl xl:text-2xl font-black text-stone-800 dark:text-slate-100 tracking-tight">
           See What Changed Between Reports
         </h2>
       </div>
 
       {/* Twin Report Cards with Central Comparison Node & Connector Network */}
       <div className="relative">
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-center gap-3 lg:gap-4 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-center gap-3 lg:gap-3.5 xl:gap-4 relative z-10">
           {/* CARD 1: PREVIOUS REPORT */}
           <div
-            className={`bg-white/95 dark:bg-[#131B2E]/95 backdrop-blur-xs border border-stone-200/90 dark:border-slate-800 rounded-2xl p-4 lg:p-5 shadow-lg shadow-stone-200/50 dark:shadow-black/50 space-y-3 transition-all duration-500 ${
+            className={`bg-white/95 dark:bg-[#131B2E]/95 backdrop-blur-xs border border-stone-200/90 dark:border-slate-800 rounded-2xl p-3 sm:p-3.5 xl:p-4 shadow-lg shadow-stone-200/50 dark:shadow-black/50 space-y-2 sm:space-y-2.5 transition-all duration-500 ${
               step >= 1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             }`}
           >
-            <div className="flex items-center justify-between border-b border-stone-100 dark:border-slate-800/80 pb-2">
+            <div className="flex items-center justify-between border-b border-stone-100 dark:border-slate-800/80 pb-1.5">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 dark:text-slate-500 block">
                   1. Previous (Baseline)
@@ -106,16 +106,16 @@ export default function AuthHeroAnimation({ theme }) {
                   Jan 15, 2026
                 </span>
               </div>
-              <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-stone-100 dark:bg-slate-800 text-stone-600 dark:text-slate-400">
+              <span className="text-[10px] sm:text-[11px] font-semibold px-2 py-0.5 rounded bg-stone-100 dark:bg-slate-800 text-stone-600 dark:text-slate-400">
                 HealthLab
               </span>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5 sm:space-y-2">
               {/* Row 1: Hemoglobin (Focus Target) */}
               <div
                 id="hero-row-hemo-prev"
-                className={`p-2.5 rounded-xl border transition-all duration-300 flex items-center justify-between relative ${
+                className={`p-2 sm:p-2.5 rounded-xl border transition-all duration-300 flex items-center justify-between relative ${
                   step >= 3
                     ? 'bg-violet-50/90 dark:bg-[#5B3FE0]/20 border-[#5B3FE0]/40 shadow-xs'
                     : 'bg-stone-50/60 dark:bg-slate-900/60 border-transparent'
@@ -126,31 +126,31 @@ export default function AuthHeroAnimation({ theme }) {
                   <span className="text-[10px] text-stone-400 dark:text-slate-500 font-mono">Ref: 13.0 – 17.0</span>
                 </div>
                 <div className="text-right">
-                  <span className="text-sm font-mono font-black text-stone-900 dark:text-slate-100 block">13.8</span>
+                  <span className="text-xs sm:text-sm font-mono font-black text-stone-900 dark:text-slate-100 block">13.8</span>
                   <span className="text-[10px] text-stone-400 dark:text-slate-500 font-mono">g/dL</span>
                 </div>
               </div>
 
               {/* Row 2: Vitamin D */}
-              <div className="p-2.5 rounded-xl bg-stone-50/40 dark:bg-slate-900/40 border border-transparent flex items-center justify-between">
+              <div className="p-2 sm:p-2.5 rounded-xl bg-stone-50/40 dark:bg-slate-900/40 border border-transparent flex items-center justify-between">
                 <div>
                   <span className="text-xs font-semibold text-stone-600 dark:text-slate-300 block">Vitamin D</span>
                   <span className="text-[10px] text-stone-400 dark:text-slate-500 font-mono">Ref: 20 – 50</span>
                 </div>
                 <div className="text-right">
-                  <span className="text-sm font-mono font-bold text-stone-700 dark:text-slate-300 block">17</span>
+                  <span className="text-xs sm:text-sm font-mono font-bold text-stone-700 dark:text-slate-300 block">17</span>
                   <span className="text-[10px] text-stone-400 dark:text-slate-500 font-mono">ng/mL</span>
                 </div>
               </div>
 
               {/* Row 3: WBC */}
-              <div className="p-2.5 rounded-xl bg-stone-50/40 dark:bg-slate-900/40 border border-transparent flex items-center justify-between">
+              <div className="p-2 sm:p-2.5 rounded-xl bg-stone-50/40 dark:bg-slate-900/40 border border-transparent flex items-center justify-between">
                 <div>
                   <span className="text-xs font-semibold text-stone-600 dark:text-slate-300 block">WBC Count</span>
                   <span className="text-[10px] text-stone-400 dark:text-slate-500 font-mono">Ref: 4,000 – 11,000</span>
                 </div>
                 <div className="text-right">
-                  <span className="text-sm font-mono font-bold text-stone-700 dark:text-slate-300 block">7,100</span>
+                  <span className="text-xs sm:text-sm font-mono font-bold text-stone-700 dark:text-slate-300 block">7,100</span>
                   <span className="text-[10px] text-stone-400 dark:text-slate-500 font-mono">/µL</span>
                 </div>
               </div>
@@ -159,32 +159,32 @@ export default function AuthHeroAnimation({ theme }) {
 
           {/* CENTRAL LABΔ COMPARISON ENGINE NODE */}
           <div className="hidden md:flex flex-col items-center justify-center px-1 z-20">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-stone-400 dark:text-slate-500 mb-2">
+            <div className="text-[9px] font-bold uppercase tracking-wider text-stone-400 dark:text-slate-500 mb-1.5">
               COMPARE
             </div>
             <div
-              className={`w-12 h-12 rounded-2xl bg-white dark:bg-[#131B2E] border-2 border-[#5B3FE0] flex items-center justify-center transition-all duration-500 ${
+              className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white dark:bg-[#131B2E] border-2 border-[#5B3FE0] flex items-center justify-center transition-all duration-500 ${
                 step >= 5
                   ? 'shadow-lg shadow-[#5B3FE0]/30 scale-105'
                   : 'scale-95 opacity-70 border-stone-300 dark:border-slate-700'
               } ${step >= 8 && !reducedMotion ? 'animate-pulse-subtle' : ''}`}
             >
-              <span className="text-2xl font-black text-[#5B3FE0] dark:text-[#8266FA] leading-none">
+              <span className="text-xl sm:text-2xl font-black text-[#5B3FE0] dark:text-[#8266FA] leading-none">
                 Δ
               </span>
             </div>
-            <div className="text-[9px] font-bold uppercase tracking-wider text-[#5B3FE0] dark:text-[#8266FA] mt-2 font-mono">
+            <div className="text-[9px] font-bold uppercase tracking-wider text-[#5B3FE0] dark:text-[#8266FA] mt-1.5 font-mono">
               ENGINE
             </div>
           </div>
 
           {/* CARD 2: CURRENT REPORT */}
           <div
-            className={`bg-white/95 dark:bg-[#131B2E]/95 backdrop-blur-xs border border-stone-200/90 dark:border-slate-800 rounded-2xl p-4 lg:p-5 shadow-lg shadow-stone-200/50 dark:shadow-black/50 space-y-3 transition-all duration-500 ${
+            className={`bg-white/95 dark:bg-[#131B2E]/95 backdrop-blur-xs border border-stone-200/90 dark:border-slate-800 rounded-2xl p-3 sm:p-3.5 xl:p-4 shadow-lg shadow-stone-200/50 dark:shadow-black/50 space-y-2 sm:space-y-2.5 transition-all duration-500 ${
               step >= 2 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             }`}
           >
-            <div className="flex items-center justify-between border-b border-stone-100 dark:border-slate-800/80 pb-2">
+            <div className="flex items-center justify-between border-b border-stone-100 dark:border-slate-800/80 pb-1.5">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 dark:text-slate-500 block">
                   2. Current (Newer)
@@ -193,16 +193,16 @@ export default function AuthHeroAnimation({ theme }) {
                   Apr 15, 2026
                 </span>
               </div>
-              <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-violet-50 dark:bg-violet-950/60 text-[#5B3FE0] dark:text-[#8266FA] border border-violet-200/60 dark:border-violet-800/60">
+              <span className="text-[10px] sm:text-[11px] font-semibold px-2 py-0.5 rounded bg-violet-50 dark:bg-violet-950/60 text-[#5B3FE0] dark:text-[#8266FA] border border-violet-200/60 dark:border-violet-800/60">
                 City Labs
               </span>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5 sm:space-y-2">
               {/* Row 1: Hemoglobin (Focus Target) */}
               <div
                 id="hero-row-hemo-curr"
-                className={`p-2.5 rounded-xl border transition-all duration-300 flex items-center justify-between relative ${
+                className={`p-2 sm:p-2.5 rounded-xl border transition-all duration-300 flex items-center justify-between relative ${
                   step >= 3
                     ? 'bg-violet-50/90 dark:bg-[#5B3FE0]/20 border-[#5B3FE0]/40 shadow-xs'
                     : 'bg-stone-50/60 dark:bg-slate-900/60 border-transparent'
@@ -213,31 +213,31 @@ export default function AuthHeroAnimation({ theme }) {
                   <span className="text-[10px] text-stone-400 dark:text-slate-500 font-mono">Ref: 13.0 – 17.0</span>
                 </div>
                 <div className="text-right">
-                  <span className="text-sm font-mono font-black text-stone-900 dark:text-slate-100 block">12.8</span>
+                  <span className="text-xs sm:text-sm font-mono font-black text-stone-900 dark:text-slate-100 block">12.8</span>
                   <span className="text-[10px] text-stone-400 dark:text-slate-500 font-mono">g/dL</span>
                 </div>
               </div>
 
               {/* Row 2: Vitamin D */}
-              <div className="p-2.5 rounded-xl bg-stone-50/40 dark:bg-slate-900/40 border border-transparent flex items-center justify-between">
+              <div className="p-2 sm:p-2.5 rounded-xl bg-stone-50/40 dark:bg-slate-900/40 border border-transparent flex items-center justify-between">
                 <div>
                   <span className="text-xs font-semibold text-stone-600 dark:text-slate-300 block">Vitamin D</span>
                   <span className="text-[10px] text-stone-400 dark:text-slate-500 font-mono">Ref: 20 – 50</span>
                 </div>
                 <div className="text-right">
-                  <span className="text-sm font-mono font-bold text-stone-700 dark:text-slate-300 block">21</span>
+                  <span className="text-xs sm:text-sm font-mono font-bold text-stone-700 dark:text-slate-300 block">21</span>
                   <span className="text-[10px] text-stone-400 dark:text-slate-500 font-mono">ng/mL</span>
                 </div>
               </div>
 
               {/* Row 3: WBC */}
-              <div className="p-2.5 rounded-xl bg-stone-50/40 dark:bg-slate-900/40 border border-transparent flex items-center justify-between">
+              <div className="p-2 sm:p-2.5 rounded-xl bg-stone-50/40 dark:bg-slate-900/40 border border-transparent flex items-center justify-between">
                 <div>
                   <span className="text-xs font-semibold text-stone-600 dark:text-slate-300 block">WBC Count</span>
                   <span className="text-[10px] text-stone-400 dark:text-slate-500 font-mono">Ref: 4,000 – 11,000</span>
                 </div>
                 <div className="text-right">
-                  <span className="text-sm font-mono font-bold text-stone-700 dark:text-slate-300 block">7,300</span>
+                  <span className="text-xs sm:text-sm font-mono font-bold text-stone-700 dark:text-slate-300 block">7,300</span>
                   <span className="text-[10px] text-stone-400 dark:text-slate-500 font-mono">/µL</span>
                 </div>
               </div>
@@ -246,7 +246,7 @@ export default function AuthHeroAnimation({ theme }) {
         </div>
 
         {/* SVG DATA CONNECTOR OVERLAY WITH TRAVELLING PARTICLES */}
-        <div className="hidden md:block absolute inset-0 pointer-events-none z-15" aria-hidden="true">
+        <div className="hidden md:block absolute inset-0 pointer-events-none z-[15]" aria-hidden="true">
           <svg className="w-full h-full" viewBox="0 0 600 240" preserveAspectRatio="none">
             {/* Left connector path (Hemoglobin row to Delta Node) */}
             <path
@@ -291,8 +291,9 @@ export default function AuthHeroAnimation({ theme }) {
             {step >= 5 && !reducedMotion && (
               <>
                 {/* Left particle moving from Jan Hemoglobin to Delta */}
-                <circle r="3" fill="#5B3FE0" opacity="0.9">
+                <circle r="3" fill={isDark ? '#8266FA' : '#5B3FE0'} opacity="0.9">
                   <animateMotion
+                    key={`p-left-${step >= 8 ? 'settled' : 'active'}`}
                     path="M 230,96 C 265,96 270,120 286,120"
                     dur={step >= 8 ? '4.2s' : '1.8s'}
                     repeatCount="indefinite"
@@ -301,8 +302,9 @@ export default function AuthHeroAnimation({ theme }) {
                 </circle>
 
                 {/* Right particle moving from Apr Hemoglobin to Delta */}
-                <circle r="3" fill="#5B3FE0" opacity="0.9">
+                <circle r="3" fill={isDark ? '#8266FA' : '#5B3FE0'} opacity="0.9">
                   <animateMotion
+                    key={`p-right-${step >= 8 ? 'settled' : 'active'}`}
                     path="M 370,96 C 335,96 330,120 314,120"
                     dur={step >= 8 ? '4.2s' : '1.8s'}
                     repeatCount="indefinite"
@@ -311,9 +313,10 @@ export default function AuthHeroAnimation({ theme }) {
                 </circle>
 
                 {/* Second subtle particle during active initial sequence */}
-                {step < 8 && (
+                {step >= 5 && step < 8 && (
                   <circle r="2.5" fill={isDark ? '#8266FA' : '#5B3FE0'} opacity="0.65">
                     <animateMotion
+                      key="p-subtle-active"
                       path="M 230,96 C 265,96 270,120 286,120"
                       dur="1.8s"
                       repeatCount="indefinite"
@@ -329,40 +332,40 @@ export default function AuthHeroAnimation({ theme }) {
 
       {/* REVEAL BRIDGE: COMPUTED DELTA & SPARKLINE RESULT */}
       <div
-        className={`mt-4 bg-gradient-to-r from-violet-50/90 via-white to-stone-50/90 dark:from-[#131B2E] dark:via-[#162038] dark:to-[#0F172A] border border-[#5B3FE0]/30 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-lg shadow-[#5B3FE0]/5 transition-all duration-500 ${
+        className={`mt-3 sm:mt-3.5 bg-gradient-to-r from-violet-50/90 via-white to-stone-50/90 dark:from-[#131B2E] dark:via-[#162038] dark:to-[#0F172A] border border-[#5B3FE0]/30 dark:border-slate-800 rounded-2xl p-3 sm:p-3.5 xl:p-4 shadow-lg shadow-[#5B3FE0]/5 transition-all duration-500 ${
           step >= 6 ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-2'
         }`}
       >
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
           {/* Delta calculation */}
-          <div className="space-y-1">
+          <div className="space-y-0.5 sm:space-y-1">
             <div className="flex items-center space-x-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-slate-400">
-                Matched Measurement: <span className="text-stone-900 dark:text-slate-100 font-black">Hemoglobin</span>
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-slate-400">
+                Matched: <span className="text-stone-900 dark:text-slate-100 font-black">Hemoglobin</span>
               </span>
-              <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-violet-100 dark:bg-violet-950/70 text-[#5B3FE0] dark:text-[#8266FA]">
+              <span className="text-[10px] sm:text-[11px] font-bold px-1.5 py-0.5 rounded-md bg-violet-100 dark:bg-violet-950/70 text-[#5B3FE0] dark:text-[#8266FA]">
                 CHANGED
               </span>
             </div>
-            <div className="flex items-baseline space-x-3">
-              <div className="text-2xl sm:text-3xl font-black font-mono text-[#5B3FE0] dark:text-[#8266FA] tracking-tight">
-                Δ −1.0 <span className="text-sm font-semibold text-stone-400 dark:text-slate-500">g/dL</span>
+            <div className="flex items-baseline space-x-2.5">
+              <div className="text-xl sm:text-2xl xl:text-3xl font-black font-mono text-[#5B3FE0] dark:text-[#8266FA] tracking-tight">
+                Δ −1.0 <span className="text-xs sm:text-sm font-semibold text-stone-400 dark:text-slate-500">g/dL</span>
               </div>
-              <span className="text-sm font-mono font-bold text-stone-600 dark:text-slate-400">
+              <span className="text-xs sm:text-sm font-mono font-bold text-stone-600 dark:text-slate-400">
                 ↓ −7.2%
               </span>
             </div>
-            <p className="text-xs text-stone-400 dark:text-slate-500">
+            <p className="text-[11px] text-stone-400 dark:text-slate-500">
               Shift from 13.8 g/dL (Jan) to 12.8 g/dL (Apr)
             </p>
           </div>
 
           {/* Animated Mini Trend Sparkline */}
-          <div className="w-full sm:w-48 h-12 flex flex-col justify-end">
-            <span className="text-[10px] font-bold uppercase text-stone-400 dark:text-slate-500 tracking-wider text-right mb-1 block">
+          <div className="w-full sm:w-44 xl:w-48 h-10 sm:h-12 flex flex-col justify-end">
+            <span className="text-[9px] sm:text-[10px] font-bold uppercase text-stone-400 dark:text-slate-500 tracking-wider text-right mb-0.5 block">
               Trajectory
             </span>
-            <svg viewBox="0 0 160 40" className="w-full h-8 overflow-visible">
+            <svg viewBox="0 0 160 40" className="w-full h-7 sm:h-8 overflow-visible">
               {/* Baseline reference dash */}
               <line
                 x1="0"
@@ -385,6 +388,7 @@ export default function AuthHeroAnimation({ theme }) {
                 style={{
                   strokeDasharray: 200,
                   strokeDashoffset: step >= 7 ? 0 : 200,
+                  transition: 'stroke-dashoffset 0.7s cubic-bezier(0.16, 1, 0.3, 1)',
                 }}
               />
               {/* Point 1 */}
