@@ -591,6 +591,7 @@ export default function App() {
           onReportCreated={(newId) => {
             setCurrentTab('reports')
             setSelectedReportId(newId)
+            showToast('Lab report saved successfully!', 'success')
           }}
           theme={theme}
         />

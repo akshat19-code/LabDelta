@@ -23,12 +23,21 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
   const [extracting, setExtracting] = useState(false)
   const [extractStep, setExtractStep] = useState(0) // 0: Reading PDF, 1: Extracting measurements, 2: Structuring results, 3: Ready
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSaved, setIsSaved] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [extractionNotice, setExtractionNotice] = useState('')
   const [duplicateWarning, setDuplicateWarning] = useState(null)
 
   const fileInputRef = useRef(null)
+  const modalBodyRef = useRef(null)
   const [focusNewRowId, setFocusNewRowId] = useState(null)
+
+  // Auto-scroll modal body to top whenever duplicateWarning or errorMessage appears
+  useEffect(() => {
+    if ((duplicateWarning || errorMessage) && modalBodyRef.current) {
+      modalBodyRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }, [duplicateWarning, errorMessage])
 
   if (!isOpen) return null
 
@@ -66,6 +75,8 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
     setErrorMessage('')
     setExtractionNotice('')
     setDuplicateWarning(null)
+    setIsSaved(false)
+    setIsSubmitting(false)
     setSourceType('manual')
     setRows([{ id: 1, testName: '', value: '', unit: '', refMin: '', refMax: '', refText: '' }])
     onClose()
@@ -179,6 +190,9 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
 
     if (!reportDate) {
       setErrorMessage('Report date is required.')
+      if (modalBodyRef.current) {
+        modalBodyRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+      }
       return
     }
 
@@ -186,12 +200,18 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
     const validRows = rows.filter((r) => r.testName.trim() !== '')
     if (validRows.length === 0) {
       setErrorMessage('Please add at least one test measurement with a name.')
+      if (modalBodyRef.current) {
+        modalBodyRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+      }
       return
     }
 
     for (const row of validRows) {
       if (!row.value || row.value.trim() === '') {
         setErrorMessage(`Please provide a value for test "${row.testName}".`)
+        if (modalBodyRef.current) {
+          modalBodyRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+        }
         return
       }
     }
@@ -215,6 +235,10 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
             message: `An identical report ${labDisplay}on ${reportDate} with the same measurements already exists in your account.`,
           })
           setIsSubmitting(false)
+          // Smoothly scroll modal body to top immediately so user sees the warning banner
+          if (modalBodyRef.current) {
+            modalBodyRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+          }
           return
         }
       }
@@ -266,6 +290,13 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
 
       if (measError) throw measError
 
+      // Visual save confirmation feedback on button
+      setIsSaved(true)
+      setIsSubmitting(false)
+
+      // Short delay for visual confirmation before closing
+      await new Promise((resolve) => setTimeout(resolve, 500))
+
       // Close modal and notify
       setDuplicateWarning(null)
       handleClose()
@@ -277,6 +308,9 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
       }
     } catch (err) {
       setErrorMessage(err.message || 'Failed to save report.')
+      if (modalBodyRef.current) {
+        modalBodyRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+      }
     } finally {
       setIsSubmitting(false)
     }
@@ -317,7 +351,7 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
         </div>
 
         {/* Modal Body */}
-        <div className="p-3.5 sm:p-4.5 overflow-y-auto flex-1 space-y-3 sm:space-y-3.5">
+        <div ref={modalBodyRef} className="p-3.5 sm:p-4.5 overflow-y-auto flex-1 space-y-3 sm:space-y-3.5">
           {errorMessage && (
             <div className="p-3 sm:p-3.5 bg-rose-50 dark:bg-rose-950/40 border border-rose-200/80 dark:border-rose-900/60 rounded-xl text-xs sm:text-sm text-rose-700 dark:text-rose-300 font-medium flex items-start space-x-2 animate-fade-in">
               <span className="text-rose-500 font-bold shrink-0">•</span>
@@ -800,13 +834,22 @@ export default function AddReportModal({ isOpen, onClose, onReportCreated, userI
                 <button
                   type="submit"
                   form="report-entry-form"
-                  disabled={isSubmitting}
-                  className="btn-primary px-3.5 sm:px-4.5 py-1.5 sm:py-2 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-xs transition-all flex items-center space-x-1.5 cursor-pointer disabled:opacity-60"
+                  disabled={isSubmitting || isSaved}
+                  className={`px-3.5 sm:px-4.5 py-1.5 sm:py-2 font-semibold text-xs sm:text-sm rounded-xl shadow-xs transition-all flex items-center space-x-1.5 cursor-pointer disabled:opacity-60 ${
+                    isSaved
+                      ? 'bg-emerald-600 text-white'
+                      : 'btn-primary text-white'
+                  }`}
                 >
                   {isSubmitting ? (
                     <>
                       <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                       <span>Saving...</span>
+                    </>
+                  ) : isSaved ? (
+                    <>
+                      <span className="text-sm font-bold">✓</span>
+                      <span>Saved!</span>
                     </>
                   ) : (
                     <span>Confirm & Save Report</span>
