@@ -4,7 +4,7 @@ import { formatValue, formatDate, formatReferenceRange } from '../lib/formatting
 import { useReportsData } from '../context/ReportsContext'
 
 export default function ReportDetailView({ reportId, onBack, onCompare }) {
-  const { reports: cachedReports = [], measurements: cachedMeasurements = [] } = useReportsData()
+  const { reports: cachedReports = [], measurements: cachedMeasurements = [], refreshData } = useReportsData()
 
   const cachedRep = cachedReports.find((r) => r.id === reportId)
   const cachedMeas = cachedMeasurements.filter((m) => m.report_id === reportId)
@@ -12,7 +12,34 @@ export default function ReportDetailView({ reportId, onBack, onCompare }) {
   const [report, setReport] = useState(cachedRep || null)
   const [measurements, setMeasurements] = useState(cachedMeas.length > 0 ? cachedMeas : [])
   const [loading, setLoading] = useState(!cachedRep)
+  const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState('')
+
+  const handleDeleteReport = async () => {
+    if (!reportId || deleting) return
+    if (!window.confirm('Are you sure you want to delete this report? This action cannot be undone.')) return
+
+    setDeleting(true)
+    try {
+      const { error: delErr } = await supabase
+        .from('reports')
+        .delete()
+        .eq('id', reportId)
+
+      if (delErr) throw delErr
+
+      if (refreshData) {
+        await refreshData()
+      }
+      if (onBack) {
+        onBack()
+      }
+    } catch (err) {
+      console.error('Failed to delete report:', err)
+      setError(err.message || 'Failed to delete report.')
+      setDeleting(false)
+    }
+  }
 
   useEffect(() => {
     async function fetchReportDetails() {
@@ -99,15 +126,27 @@ export default function ReportDetailView({ reportId, onBack, onCompare }) {
           <span>←</span>
           <span>Back to Report History</span>
         </button>
-        {onCompare && (
+        <div className="flex items-center space-x-2">
           <button
-            onClick={() => onCompare(report.id)}
-            className="btn-primary inline-flex items-center space-x-1.5 px-3.5 py-1.5 sm:py-2 text-white text-xs font-semibold rounded-xl shadow-xs cursor-pointer"
+            type="button"
+            onClick={handleDeleteReport}
+            disabled={deleting}
+            className="px-3 py-1.5 sm:py-2 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 rounded-xl text-xs font-semibold cursor-pointer transition-colors flex items-center space-x-1.5 disabled:opacity-50"
+            title="Delete this report"
           >
-            <span>Compare with another report</span>
-            <span>→</span>
+            <span>🗑️</span>
+            <span>{deleting ? 'Deleting...' : 'Delete Report'}</span>
           </button>
-        )}
+          {onCompare && (
+            <button
+              onClick={() => onCompare(report.id)}
+              className="btn-primary inline-flex items-center space-x-1.5 px-3.5 py-1.5 sm:py-2 text-white text-xs font-semibold rounded-xl shadow-xs cursor-pointer"
+            >
+              <span>Compare with another report</span>
+              <span>→</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Report Header Card */}
