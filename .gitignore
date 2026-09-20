@@ -31,8 +31,16 @@ build/
 *.egg-info/
 .vite/
 
+# Logs & temporary files
+*.log
+logs/
+*.tmp
+*.temp
+scratch/
+
 # IDE & OS
 .vscode/
 .idea/
 .DS_Store
 Thumbs.db
+

@@ -35,13 +35,50 @@ export function formatPointReference(m) {
   if (m.reference_text) {
     return m.reference_text
   }
-  return 'Not specified'
+  return 'Not provided'
+}
+
+/**
+ * Deterministically derives range status ONLY from that report's supplied reference range.
+ * Strictly non-diagnostic and objective.
+ *
+ * @param {number|null} value - The observed numeric measurement
+ * @param {number|null} refMin - Reference min
+ * @param {number|null} refMax - Reference max
+ * @returns {Object} { key: 'within'|'below'|'above'|'unavailable', label: string, tooltipLabel: string }
+ */
+export function computePointRangeStatus(value, refMin, refMax) {
+  if (value === null || value === undefined || isNaN(Number(value))) {
+    return { key: 'unavailable', label: 'Range unavailable', tooltipLabel: 'Range unavailable' }
+  }
+  const val = Number(value)
+  const hasMin = refMin !== null && refMin !== undefined && refMin !== '' && !isNaN(Number(refMin))
+  const hasMax = refMax !== null && refMax !== undefined && refMax !== '' && !isNaN(Number(refMax))
+
+  if (hasMin && hasMax) {
+    const numMin = Number(refMin)
+    const numMax = Number(refMax)
+    if (val < numMin) return { key: 'below', label: 'Below range', tooltipLabel: 'Below provided range' }
+    if (val > numMax) return { key: 'above', label: 'Above range', tooltipLabel: 'Above provided range' }
+    return { key: 'within', label: 'Within range', tooltipLabel: 'Within provided range' }
+  }
+  if (hasMin && !hasMax) {
+    const numMin = Number(refMin)
+    if (val < numMin) return { key: 'below', label: 'Below range', tooltipLabel: 'Below provided range' }
+    return { key: 'within', label: 'Within range', tooltipLabel: 'Within provided range' }
+  }
+  if (!hasMin && hasMax) {
+    const numMax = Number(refMax)
+    if (val > numMax) return { key: 'above', label: 'Above range', tooltipLabel: 'Above provided range' }
+    return { key: 'within', label: 'Within range', tooltipLabel: 'Within provided range' }
+  }
+  return { key: 'unavailable', label: 'Range unavailable', tooltipLabel: 'Range unavailable' }
 }
 
 /**
  * Builds the complete trends summary from user reports and measurements.
  * 
- * @param {Array} reports - List of report records { id, report_date, lab_name, created_at }
+ * @param {Array} reports - List of report records { id, report_date, lab_name, created_at, source_type }
  * @param {Array} measurements - List of measurement records
  * @returns {Object} Trends summary metadata and test groupings
  */
@@ -70,12 +107,14 @@ export function buildTrendsSummary(reports = [], measurements = []) {
 
     const testEntry = testsMap.get(testName)
     const isNumeric = m.value_numeric !== null && m.value_numeric !== undefined && !isNaN(Number(m.value_numeric))
+    const rangeStatus = computePointRangeStatus(isNumeric ? Number(m.value_numeric) : null, m.reference_min, m.reference_max)
 
     const point = {
       id: m.id,
       reportId: report.id,
       reportDate: report.report_date,
       createdAt: report.created_at,
+      sourceType: report.source_type,
       formattedDate: formatTrendDate(report.report_date),
       labName: report.lab_name || 'Lab not specified',
       valueNumeric: isNumeric ? Number(m.value_numeric) : null,
@@ -86,6 +125,9 @@ export function buildTrendsSummary(reports = [], measurements = []) {
       refMax: m.reference_max,
       refText: m.reference_text,
       refDisplay: formatPointReference(m),
+      rangeStatusKey: rangeStatus.key,
+      rangeStatusLabel: rangeStatus.label,
+      rangeStatusTooltip: rangeStatus.tooltipLabel,
     }
 
     if (isNumeric) {
@@ -123,11 +165,43 @@ export function buildTrendsSummary(reports = [], measurements = []) {
         return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
       })
 
-      // If multiple points exist for the same test on the same report date, keep chronological points
-      const points = sortedRows.map((r) => ({
-        ...r,
-        value: r.valueNumeric,
-      }))
+      // Count duplicate dates within this unit series to make them distinguishable on chart
+      const dateCounts = new Map()
+      const dateLabCounts = new Map()
+      for (const r of sortedRows) {
+        const dKey = r.reportDate || r.formattedDate
+        dateCounts.set(dKey, (dateCounts.get(dKey) || 0) + 1)
+        const dlKey = `${dKey}_${r.labName}`
+        dateLabCounts.set(dlKey, (dateLabCounts.get(dlKey) || 0) + 1)
+      }
+
+      const dateIndexTracker = new Map()
+      const dateLabIndexTracker = new Map()
+      const points = sortedRows.map((r) => {
+        const dKey = r.reportDate || r.formattedDate
+        const dlKey = `${dKey}_${r.labName}`
+        const totalOnDate = dateCounts.get(dKey) || 1
+        const totalOnDateLab = dateLabCounts.get(dlKey) || 1
+        const currentIdx = (dateIndexTracker.get(dKey) || 0) + 1
+        dateIndexTracker.set(dKey, currentIdx)
+        const currentLabIdx = (dateLabIndexTracker.get(dlKey) || 0) + 1
+        dateLabIndexTracker.set(dlKey, currentLabIdx)
+
+        const isDuplicateDate = totalOnDate > 1
+        const isDuplicateDateAndLab = totalOnDateLab > 1
+        const chartTick = isDuplicateDate ? `${r.formattedDate} (${currentIdx})` : r.formattedDate
+
+        return {
+          ...r,
+          value: r.valueNumeric,
+          isDuplicateDate,
+          isDuplicateDateAndLab,
+          dateIndex: currentIdx,
+          dateLabIndex: currentLabIdx,
+          dateOccurrenceCount: totalOnDate,
+          chartTick,
+        }
+      })
 
       // Mathematical delta calculations
       const first = points[0]

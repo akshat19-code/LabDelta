@@ -1,4 +1,4 @@
-﻿from fastapi import Depends, FastAPI, File, HTTPException, UploadFile, status
+from fastapi import Depends, FastAPI, File, HTTPException, UploadFile, status
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.auth import get_current_user
@@ -56,7 +56,7 @@ async def extract_report(
     # 3. Check file size
     if len(contents) > MAX_PDF_SIZE_BYTES:
         raise HTTPException(
-            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            status_code=413,
             detail="PDF file exceeds the 10 MB size limit.",
         )
 
@@ -71,14 +71,14 @@ async def extract_report(
         extracted_text = extract_text_from_pdf(contents)
     except ValueError as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=422,
             detail=str(exc),
         )
 
     # 5. Check if PDF contains selectable text
     if not extracted_text or len(extracted_text.strip()) < 20:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=422,
             detail="This PDF appears to contain little or no selectable text. Please use Manual Entry for this report.",
         )
 

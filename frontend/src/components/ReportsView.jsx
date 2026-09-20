@@ -1,13 +1,38 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '../lib/supabase'
+import { formatDate } from '../lib/formatting'
+import { hasDemoData, loadDemoData } from '../lib/demoData'
+import { useReportsData } from '../context/ReportsContext'
 
-export default function ReportsView({ onOpenAddReport, onSelectReport }) {
-  const [reports, setReports] = useState([])
-  const [loading, setLoading] = useState(true)
+export default function ReportsView({ onOpenAddReport, onSelectReport, userId, showToast }) {
+  const { reports: cachedReports = [], measurements = [], loading: contextLoading = false, isLoaded = false, refreshData, hasProvider = false } = useReportsData()
+
+  const [localReports, setLocalReports] = useState([])
+  const [localLoading, setLocalLoading] = useState(false)
+  const [loadingDemo, setLoadingDemo] = useState(false)
   const [error, setError] = useState('')
 
+  // Calculate measurement counts for reports in memory
+  const reports = useMemo(() => {
+    if (isLoaded || cachedReports.length > 0) {
+      const counts = {}
+      for (const m of measurements) {
+        counts[m.report_id] = (counts[m.report_id] || 0) + 1
+      }
+      return cachedReports.map((r) => ({
+        ...r,
+        measurements: [{ count: counts[r.id] || 0 }],
+      }))
+    }
+    return localReports
+  }, [cachedReports, measurements, isLoaded, localReports])
+
+  // Only show blocking loading state during initial cold fetch when no cached data exists
+  const loading = (contextLoading && !isLoaded && cachedReports.length === 0) || localLoading
+
   const fetchReports = async () => {
-    setLoading(true)
+    if (isLoaded) return
+    setLocalLoading(true)
     setError('')
     try {
       // Fetch reports with count of measurements
@@ -24,108 +49,185 @@ export default function ReportsView({ onOpenAddReport, onSelectReport }) {
         .order('report_date', { ascending: false })
 
       if (error) throw error
-      setReports(data || [])
+      setLocalReports(data || [])
     } catch (err) {
       setError(err.message || 'Failed to load report history.')
     } finally {
-      setLoading(false)
+      setLocalLoading(false)
     }
   }
 
   useEffect(() => {
-    fetchReports()
-  }, [])
+    if (!hasProvider && !isLoaded && cachedReports.length === 0) {
+      fetchReports()
+    }
+  }, [isLoaded, cachedReports.length, hasProvider])
+
+  const handleLoadDemo = async () => {
+    if (!userId || loadingDemo) return
+
+    setLoadingDemo(true)
+    try {
+      const alreadyHas = await hasDemoData(userId)
+      if (alreadyHas) {
+        if (showToast) {
+          showToast('Demo reports are already loaded.', 'info')
+        }
+        return
+      }
+
+      const res = await loadDemoData(userId)
+      if (res.success) {
+        if (refreshData) {
+          await refreshData()
+        } else {
+          await fetchReports()
+        }
+        if (showToast) {
+          showToast('Demo workspace ready — explore Compare and Trends.', 'success')
+        }
+      } else {
+        if (showToast) {
+          showToast(res.message || 'Failed to load demo data.', 'error')
+        }
+      }
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoadingDemo(false)
+    }
+  }
 
   return (
-    <div className="space-y-6 max-w-5xl antialiased">
-      {/* Header & Primary Action */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-stone-200/80 pb-5">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-stone-900">
-            Reports
-          </h2>
-          <p className="text-xs text-stone-500 font-medium mt-0.5">
-            Your laboratory report history
-          </p>
+    <div className="space-y-6 antialiased">
+      {/* Header & Primary Actions */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-stone-200/80 dark:border-slate-800 pb-6">
+        <div className="flex items-center space-x-3.5">
+          <div className="w-11 h-11 rounded-2xl bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 text-[#5B3FE0] text-2xl font-black flex items-center justify-center shrink-0">
+            📋
+          </div>
+          <div>
+            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-stone-900 dark:text-slate-100">
+              Reports History
+            </h2>
+            <p className="text-sm sm:text-base text-stone-500 dark:text-slate-400 font-medium mt-1">
+              Your recorded laboratory panels and historical diagnostic records.
+            </p>
+          </div>
         </div>
-        <button
-          onClick={onOpenAddReport}
-          className="inline-flex items-center justify-center space-x-2 px-4 py-2.5 bg-[#5B3FE0] hover:bg-[#4d34c7] text-white text-xs font-semibold rounded-xl shadow-sm transition-all cursor-pointer"
-        >
-          <span>+</span>
-          <span>Add Report</span>
-        </button>
+        <div className="flex items-center space-x-2.5">
+          <button
+            onClick={onOpenAddReport}
+            className="btn-primary inline-flex items-center justify-center space-x-2 px-5 py-2.5 sm:py-3 text-white text-sm sm:text-base font-semibold rounded-xl shadow-xs cursor-pointer"
+          >
+            <span className="text-base leading-none">+</span>
+            <span>Add Report</span>
+          </button>
+        </div>
       </div>
 
       {error && (
-        <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700">
+        <div className="p-4 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 rounded-2xl text-sm text-rose-700 dark:text-rose-300 animate-fade-in">
           {error}
         </div>
       )}
 
       {loading ? (
-        <div className="py-16 flex flex-col items-center justify-center space-y-3">
-          <div className="w-8 h-8 border-3 border-[#5B3FE0] border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-xs font-medium text-stone-500">Loading your reports...</p>
+        <div className="space-y-3">
+          {[1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
+              className="bg-white dark:bg-[#131B2E] border border-stone-200/80 dark:border-slate-800 rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-pulse"
+            >
+              <div className="space-y-2">
+                <div className="flex items-center space-x-3">
+                  <div className="h-6 w-36 bg-stone-200 dark:bg-slate-700 rounded-md"></div>
+                  <div className="h-4 w-14 bg-stone-100 dark:bg-slate-800 rounded-md"></div>
+                </div>
+                <div className="h-4 w-52 bg-stone-100 dark:bg-slate-800 rounded-md"></div>
+              </div>
+              <div className="flex items-center justify-between sm:justify-end sm:space-x-6 pt-3 sm:pt-0 border-t sm:border-t-0 border-stone-100 dark:border-slate-800">
+                <div className="space-y-1 text-left sm:text-right">
+                  <div className="h-5 w-28 bg-stone-200 dark:bg-slate-700 rounded-md"></div>
+                  <div className="h-3.5 w-32 bg-stone-100 dark:bg-slate-800 rounded-md"></div>
+                </div>
+                <div className="h-5 w-5 bg-stone-100 dark:bg-slate-800 rounded-full"></div>
+              </div>
+            </div>
+          ))}
         </div>
       ) : reports.length === 0 ? (
-        /* Empty State */
-        <div className="bg-white border border-dashed border-stone-300 rounded-2xl p-12 text-center space-y-4 max-w-xl mx-auto my-8">
-          <div className="w-12 h-12 rounded-2xl bg-[#5B3FE0]/10 text-[#5B3FE0] text-2xl flex items-center justify-center mx-auto">
+        /* Empty State with Section AK copy & watermark glyph */
+        <div className="relative overflow-hidden bg-white dark:bg-[#131B2E] border border-dashed border-stone-300 dark:border-slate-800 rounded-3xl p-8 sm:p-14 text-center space-y-5 max-w-xl mx-auto my-6">
+          <div className="watermark-glyph select-none pointer-events-none opacity-40">Δ</div>
+          <div className="relative z-10 w-16 h-16 rounded-2xl bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 text-[#5B3FE0] text-3xl font-black flex items-center justify-center mx-auto shadow-xs">
             Δ
           </div>
-          <div className="space-y-1">
-            <h3 className="text-base font-bold text-stone-900">No reports yet</h3>
-            <p className="text-xs text-stone-500 max-w-xs mx-auto leading-relaxed">
-              Add your first laboratory report to start tracking markers and seeing what changes over time.
+          <div className="relative z-10 space-y-2">
+            <h3 className="text-xl sm:text-2xl font-bold text-stone-900 dark:text-slate-100">No reports yet</h3>
+            <p className="text-sm sm:text-base text-stone-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
+              Upload a PDF or enter values manually to begin tracking changes.
             </p>
           </div>
-          <button
-            onClick={onOpenAddReport}
-            className="inline-flex items-center space-x-1.5 px-4 py-2 bg-[#5B3FE0] hover:bg-[#4d34c7] text-white text-xs font-semibold rounded-xl shadow-xs transition-all cursor-pointer"
-          >
-            <span>+ Add Your First Report</span>
-          </button>
+          <div className="relative z-10 flex flex-wrap items-center justify-center gap-3 pt-3">
+            <button
+              onClick={onOpenAddReport}
+              className="btn-primary inline-flex items-center space-x-2 px-5 py-3 text-white text-sm sm:text-base font-semibold rounded-xl shadow-xs cursor-pointer"
+            >
+              <span>+ Add Your First Report</span>
+            </button>
+            <button
+              onClick={handleLoadDemo}
+              disabled={loadingDemo}
+              className="btn-secondary inline-flex items-center space-x-2 px-5 py-3 text-sm sm:text-base font-semibold shadow-xs cursor-pointer"
+            >
+              <span>✨ Explore with Demo Data</span>
+            </button>
+          </div>
         </div>
       ) : (
         /* Report History List */
-        <div className="grid grid-cols-1 gap-3">
-          {reports.map((report) => {
+        <div className="grid grid-cols-1 gap-3.5 animate-fade-in">
+          {reports.map((report, idx) => {
             const count = report.measurements?.[0]?.count ?? 0
             return (
               <div
                 key={report.id}
                 onClick={() => onSelectReport(report.id)}
-                className="bg-white border border-stone-200/80 hover:border-[#5B3FE0]/60 rounded-xl p-5 shadow-2xs hover:shadow-md transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 group"
+                className={`bg-white dark:bg-[#131B2E] border border-stone-200/80 dark:border-slate-800 hover:border-[#5B3FE0]/50 dark:hover:border-[#5B3FE0]/50 rounded-2xl p-5 sm:p-6 lg:p-7 card-interactive cursor-pointer flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 group stagger-${idx % 5}`}
               >
-                <div className="space-y-1">
-                  <div className="flex items-center space-x-2.5">
-                    <span className="font-bold text-base text-stone-900 group-hover:text-[#5B3FE0] transition-colors">
-                      {new Date(report.report_date).toLocaleDateString(undefined, {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                      })}
+                <div className="space-y-1.5">
+                  <div className="flex items-center space-x-3">
+                    <span className="font-bold text-lg sm:text-xl text-stone-900 dark:text-slate-100 group-hover:text-[#5B3FE0] dark:group-hover:text-[#8266FA] transition-colors">
+                      {formatDate(report.report_date)}
                     </span>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-stone-600 bg-stone-100 px-2 py-0.5 rounded-md">
+                    <span
+                      className={`text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md ${
+                        report.source_type === 'demo'
+                          ? 'bg-violet-50 dark:bg-violet-950/60 text-[#5B3FE0] dark:text-[#8266FA] border border-violet-200/70 dark:border-violet-800/60'
+                          : report.source_type === 'pdf'
+                          ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
+                          : 'bg-stone-100 dark:bg-slate-800 text-stone-600 dark:text-slate-400'
+                      }`}
+                    >
                       {report.source_type}
                     </span>
                   </div>
-                  <p className="text-xs text-stone-500 font-medium">
+                  <p className="text-sm sm:text-base text-stone-500 dark:text-slate-400 font-medium truncate max-w-xs sm:max-w-md">
                     {report.lab_name || 'Lab not specified'}
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between sm:justify-end sm:space-x-6 pt-2 sm:pt-0 border-t sm:border-t-0 border-stone-100">
+                <div className="flex items-center justify-between sm:justify-end sm:space-x-6 pt-3 sm:pt-0 border-t sm:border-t-0 border-stone-100 dark:border-slate-800">
                   <div className="text-left sm:text-right">
-                    <span className="text-xs font-bold text-stone-800 block">
+                    <span className="text-sm sm:text-base font-bold text-stone-800 dark:text-slate-200 block">
                       {count} {count === 1 ? 'measurement' : 'measurements'}
                     </span>
-                    <span className="text-[11px] text-stone-400 font-mono">
-                      Added {new Date(report.created_at).toLocaleDateString()}
+                    <span className="text-xs text-stone-400 dark:text-slate-500 font-mono block mt-0.5">
+                      Added {formatDate(report.created_at)}
                     </span>
                   </div>
-                  <span className="text-stone-400 group-hover:text-[#5B3FE0] group-hover:translate-x-0.5 transition-all text-sm font-bold">
+                  <span className="text-stone-400 dark:text-slate-500 group-hover:text-[#5B3FE0] dark:group-hover:text-[#8266FA] group-hover:translate-x-1.5 transition-all text-xl font-bold">
                     →
                   </span>
                 </div>

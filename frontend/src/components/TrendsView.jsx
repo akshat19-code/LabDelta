@@ -10,31 +10,155 @@ import {
 } from 'recharts'
 import { supabase } from '../lib/supabase'
 import { buildTrendsSummary, computeYAxisDomain } from '../lib/trends'
+import { formatValue, formatDelta, formatPercent, formatDate, cleanLabName } from '../lib/formatting'
+import { useReportsData } from '../context/ReportsContext'
+
+/**
+ * Custom SVG Dot component for Recharts line chart
+ * Deterministically renders discrete observation points with subtle range-status differentiation.
+ * Avoids conventional green=healthy / red=unhealthy semantics.
+ * - Within range: violet/product accent (#5B3FE0)
+ * - Below range: amber treatment with inner marker
+ * - Above range: amber treatment with inner marker
+ * - Unavailable: neutral gray ring
+ */
+function CustomTrendDot(props) {
+  const { cx, cy, payload, active, theme } = props
+  if (cx === undefined || cy === undefined || !payload) return null
+
+  const statusKey = payload.rangeStatusKey || 'unavailable'
+  const isDark = theme === 'dark'
+  const r = active ? 7 : 5.5
+  const strokeColor = isDark ? '#0B0F19' : '#ffffff'
+  const strokeWidth = active ? 2.5 : 2
+
+  if (statusKey === 'within') {
+    return (
+      <circle
+        cx={cx}
+        cy={cy}
+        r={r}
+        fill="#5B3FE0"
+        stroke={strokeColor}
+        strokeWidth={strokeWidth}
+      />
+    )
+  }
+
+  if (statusKey === 'below') {
+    const amberFill = isDark ? '#F59E0B' : '#D97706'
+    const markFill = isDark ? '#0B0F19' : '#FFFFFF'
+    return (
+      <g>
+        <circle
+          cx={cx}
+          cy={cy}
+          r={r}
+          fill={amberFill}
+          stroke={strokeColor}
+          strokeWidth={strokeWidth}
+        />
+        <polygon
+          points={`${cx - 2.5},${cy - 1.2} ${cx + 2.5},${cy - 1.2} ${cx},${cy + 2.2}`}
+          fill={markFill}
+        />
+      </g>
+    )
+  }
+
+  if (statusKey === 'above') {
+    const amberFill = isDark ? '#F59E0B' : '#D97706'
+    const markFill = isDark ? '#0B0F19' : '#FFFFFF'
+    return (
+      <g>
+        <circle
+          cx={cx}
+          cy={cy}
+          r={r}
+          fill={amberFill}
+          stroke={strokeColor}
+          strokeWidth={strokeWidth}
+        />
+        <polygon
+          points={`${cx},${cy - 2.2} ${cx - 2.5},${cy + 1.2} ${cx + 2.5},${cy + 1.2}`}
+          fill={markFill}
+        />
+      </g>
+    )
+  }
+
+  // Unavailable: neutral slate ring
+  return (
+    <circle
+      cx={cx}
+      cy={cy}
+      r={r}
+      fill={isDark ? '#1E293B' : '#FFFFFF'}
+      stroke={isDark ? '#64748B' : '#94A3B8'}
+      strokeWidth={strokeWidth}
+    />
+  )
+}
 
 /**
  * Custom Tooltip component for Recharts line chart
  */
-function TrendTooltip({ active, payload, unit }) {
+function TrendTooltip({ active, payload, unit, theme }) {
   if (active && payload && payload.length) {
     const point = payload[0].payload
+
+    let statusText = 'Range unavailable'
+    let statusBadgeClass = 'text-stone-600 dark:text-slate-400 bg-stone-100 dark:bg-slate-800'
+
+    if (point.rangeStatusKey === 'within') {
+      statusText = 'Within provided range'
+      statusBadgeClass = 'text-[#5B3FE0] dark:text-[#8266FA] bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20'
+    } else if (point.rangeStatusKey === 'below') {
+      statusText = 'Below provided range'
+      statusBadgeClass = 'text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 border border-amber-200/70 dark:border-amber-800/60'
+    } else if (point.rangeStatusKey === 'above') {
+      statusText = 'Above provided range'
+      statusBadgeClass = 'text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 border border-amber-200/70 dark:border-amber-800/60'
+    }
+
     return (
-      <div className="bg-white/95 backdrop-blur-xs border border-stone-200 rounded-xl p-3 shadow-lg text-xs space-y-1.5 min-w-44 z-50">
-        <div className="flex items-center justify-between border-b border-stone-100 pb-1.5">
-          <span className="font-bold text-stone-900">{point.formattedDate}</span>
-          <span className="text-[10px] text-stone-400 font-mono">
-            {point.labName}
-          </span>
+      <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xs border border-stone-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl text-xs sm:text-sm space-y-2.5 min-w-64 max-w-xs z-50 animate-scale-in">
+        <div className="border-b border-stone-100 dark:border-slate-800 pb-2 space-y-1">
+          <div className="flex items-center justify-between">
+            <span className="font-bold text-stone-900 dark:text-slate-100 text-sm">{point.formattedDate}</span>
+            {point.isDuplicateDateAndLab && (
+              <span className="text-[10px] font-semibold text-stone-400 dark:text-slate-500 font-mono">
+                Obs {point.dateLabIndex} of {point.dateOccurrenceCount}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center space-x-1.5 truncate">
+            <span className="text-xs text-stone-500 dark:text-slate-400 font-medium truncate">
+              {cleanLabName(point.labName)}
+            </span>
+            {point.sourceType === 'demo' && (
+              <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded bg-violet-50 dark:bg-violet-950/60 text-[#5B3FE0] dark:text-[#8266FA] border border-violet-200/70 dark:border-violet-800/60 shrink-0">
+                DEMO
+              </span>
+            )}
+          </div>
         </div>
         <div className="flex items-baseline justify-between pt-0.5">
-          <span className="text-stone-500 font-medium">Observed Value:</span>
-          <span className="font-extrabold text-stone-900 text-sm font-mono">
-            {point.value} {unit}
+          <span className="text-stone-500 dark:text-slate-400 font-medium">Observed</span>
+          <span className="font-extrabold text-stone-900 dark:text-slate-100 text-base sm:text-lg font-mono">
+            {formatValue(point.value)} {unit}
           </span>
         </div>
-        <div className="flex items-baseline justify-between text-[11px] text-stone-500 pt-0.5 border-t border-stone-100">
-          <span>Report Ref Range:</span>
-          <span className="font-semibold text-stone-700 font-mono">
-            {point.refDisplay}
+        <div className="flex items-baseline justify-between text-xs text-stone-500 dark:text-slate-400 pt-1 border-t border-stone-100 dark:border-slate-800">
+          <span className="font-medium">Reference Range</span>
+          <span className="font-semibold text-stone-700 dark:text-slate-300 font-mono">
+            {point.refDisplay || 'Not provided'}
+          </span>
+        </div>
+        <div className="flex items-center justify-between text-xs pt-1 border-t border-stone-100 dark:border-slate-800">
+          <span className="text-stone-500 dark:text-slate-400 font-medium">Status</span>
+          <span className={`px-2 py-0.5 rounded-md font-semibold text-[11px] ${statusBadgeClass}`}>
+            {statusText}
           </span>
         </div>
       </div>
@@ -43,16 +167,19 @@ function TrendTooltip({ active, payload, unit }) {
   return null
 }
 
-export default function TrendsView({ onOpenAddReport }) {
-  const [loading, setLoading] = useState(true)
+export default function TrendsView({ onOpenAddReport, theme = 'light' }) {
+  const { reports: cachedReports = [], measurements: cachedMeasurements = [], loading: contextLoading = false, isLoaded = false, hasProvider = false } = useReportsData()
+
+  const [loading, setLoading] = useState(contextLoading && !isLoaded && cachedReports.length === 0)
   const [error, setError] = useState('')
   const [summaryData, setSummaryData] = useState(null)
   const [selectedTestName, setSelectedTestName] = useState('')
   const [selectedUnit, setSelectedUnit] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
 
-  // Fetch all reports and measurements for authenticated user
+  // Fetch all reports and measurements for authenticated user (fallback)
   const fetchTrendsData = async () => {
+    if (isLoaded) return
     setLoading(true)
     setError('')
     try {
@@ -91,9 +218,35 @@ export default function TrendsView({ onOpenAddReport }) {
     }
   }
 
+  // Derive trends summary synchronously from cached reports & measurements
   useEffect(() => {
-    fetchTrendsData()
-  }, [])
+    if (isLoaded || cachedReports.length > 0) {
+      const chronological = [...cachedReports].sort((a, b) => (a.report_date > b.report_date ? 1 : -1))
+      const summary = buildTrendsSummary(chronological, cachedMeasurements)
+      setSummaryData(summary)
+      setLoading(false)
+
+      if (summary.eligibleTests.length > 0) {
+        setSelectedTestName((prev) => {
+          if (prev && summary.eligibleTests.some((t) => t.testName === prev)) return prev
+          return summary.eligibleTests[0].testName
+        })
+        setSelectedUnit((prev) => {
+          const matchTest = summary.eligibleTests.find((t) => t.testName === (selectedTestName || summary.eligibleTests[0].testName))
+          if (matchTest && prev && matchTest.unitGroups.some((g) => g.unitLabel === prev)) return prev
+          return matchTest?.defaultUnit || ''
+        })
+      } else {
+        setSelectedTestName('')
+        setSelectedUnit('')
+      }
+      return
+    }
+
+    if (!hasProvider) {
+      fetchTrendsData()
+    }
+  }, [cachedReports, cachedMeasurements, isLoaded, hasProvider])
 
   // Find currently selected test data
   const currentTest = useMemo(() => {
@@ -139,13 +292,47 @@ export default function TrendsView({ onOpenAddReport }) {
   }
 
   // ----------------------------------------------------
-  // LOADING STATE
+  // LOADING STATE (Shimmer Skeletons)
   // ----------------------------------------------------
   if (loading) {
     return (
-      <div className="py-20 flex flex-col items-center justify-center space-y-3 antialiased">
-        <div className="w-9 h-9 border-3 border-[#5B3FE0] border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-xs font-medium text-stone-500">Preparing biomarker trends...</p>
+      <div className="space-y-6 sm:space-y-8 antialiased">
+        <div className="border-b border-stone-200/80 pb-6 flex items-center justify-between">
+          <div className="space-y-2 animate-pulse">
+            <div className="h-8 w-48 bg-stone-200 rounded-xl"></div>
+            <div className="h-4 w-72 bg-stone-100 rounded-md"></div>
+          </div>
+          <div className="h-9 w-28 bg-stone-200 rounded-xl animate-pulse"></div>
+        </div>
+
+        {/* Skeletons for top metric strip */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="bg-white border border-stone-200/90 rounded-2xl p-4 sm:p-5 space-y-2 animate-pulse">
+              <div className="h-3 w-20 bg-stone-200 rounded-md"></div>
+              <div className="h-7 w-16 bg-stone-200 rounded-md"></div>
+              <div className="h-3 w-28 bg-stone-100 rounded-md"></div>
+            </div>
+          ))}
+        </div>
+
+        {/* Skeleton for test selector */}
+        <div className="bg-white border border-stone-200/90 rounded-3xl p-5 sm:p-6 space-y-4 animate-pulse">
+          <div className="h-4 w-40 bg-stone-200 rounded-md"></div>
+          <div className="flex flex-wrap gap-2">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="h-8 w-24 bg-stone-100 rounded-xl"></div>
+            ))}
+          </div>
+        </div>
+
+        {/* Skeleton for chart card */}
+        <div className="bg-white border border-stone-200/90 rounded-3xl p-6 sm:p-8 space-y-6 animate-pulse">
+          <div className="h-6 w-36 bg-stone-200 rounded-md"></div>
+          <div className="h-72 bg-stone-50 rounded-2xl border border-stone-100 flex items-center justify-center">
+            <div className="w-8 h-8 border-2 border-[#5B3FE0] border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        </div>
       </div>
     )
   }
@@ -155,19 +342,15 @@ export default function TrendsView({ onOpenAddReport }) {
   // ----------------------------------------------------
   if (error) {
     return (
-      <div className="space-y-4 max-w-xl mx-auto my-12 antialiased">
-        <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 flex items-start space-x-2">
-          <span className="text-rose-500 font-bold">•</span>
-          <div className="space-y-1 flex-1">
-            <p className="font-semibold">Unable to load trends</p>
-            <p>{error}</p>
-          </div>
+      <div className="space-y-4 antialiased animate-fade-in">
+        <div className="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-700">
+          {error}
         </div>
         <button
           onClick={fetchTrendsData}
-          className="px-4 py-2 bg-[#5B3FE0] text-white text-xs font-semibold rounded-xl hover:bg-[#4d34c7] transition-all cursor-pointer"
+          className="btn-primary px-4 py-2 text-white text-xs font-semibold rounded-xl"
         >
-          Try Again
+          Retry
         </button>
       </div>
     )
@@ -178,30 +361,42 @@ export default function TrendsView({ onOpenAddReport }) {
   // ----------------------------------------------------
   if (!summaryData || summaryData.totalReportsCount === 0) {
     return (
-      <div className="space-y-6 max-w-4xl antialiased">
-        <div className="border-b border-stone-200/80 pb-5">
-          <h2 className="text-2xl font-bold tracking-tight text-stone-900">Trends</h2>
-          <p className="text-xs text-stone-500 font-medium mt-0.5">
-            Track how your measurements change across reports
-          </p>
+      <div className="space-y-6 antialiased">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-stone-200/80 dark:border-slate-800 pb-6">
+          <div className="flex items-center space-x-3.5">
+            <div className="w-11 h-11 rounded-2xl bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 text-[#5B3FE0] text-2xl font-black flex items-center justify-center shrink-0">
+              📈
+            </div>
+            <div>
+              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-stone-900 dark:text-slate-100">
+                Measurement Trends
+              </h2>
+              <p className="text-sm sm:text-base text-stone-500 dark:text-slate-400 font-medium mt-1">
+                Chronological trajectories for repeated laboratory observations.
+              </p>
+            </div>
+          </div>
         </div>
 
-        <div className="bg-white border border-dashed border-stone-300 rounded-2xl p-12 text-center space-y-4 max-w-xl mx-auto my-8">
-          <div className="w-12 h-12 rounded-2xl bg-[#5B3FE0]/10 text-[#5B3FE0] text-2xl flex items-center justify-center mx-auto">
+        <div className="relative overflow-hidden bg-white dark:bg-[#131B2E] border border-dashed border-stone-300 dark:border-slate-800 rounded-3xl p-10 sm:p-14 text-center space-y-5 max-w-xl mx-auto my-8 shadow-xs">
+          <div className="watermark-glyph select-none pointer-events-none opacity-40">Δ</div>
+          <div className="relative z-10 w-16 h-16 rounded-2xl bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 text-[#5B3FE0] text-3xl font-black flex items-center justify-center mx-auto shadow-xs">
             📈
           </div>
-          <div className="space-y-1">
-            <h3 className="text-base font-bold text-stone-900">No report history yet</h3>
-            <p className="text-xs text-stone-500 max-w-xs mx-auto leading-relaxed">
-              Add your first laboratory reports to start observing historical measurement trajectories and changes over time.
+          <div className="relative z-10 space-y-2">
+            <h3 className="text-xl sm:text-2xl font-bold text-stone-900 dark:text-slate-100">No report history yet</h3>
+            <p className="text-sm sm:text-base text-stone-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
+              Add your first laboratory reports to observe historical measurement trajectories and changes over time.
             </p>
           </div>
-          <button
-            onClick={onOpenAddReport}
-            className="inline-flex items-center space-x-1.5 px-4 py-2 bg-[#5B3FE0] hover:bg-[#4d34c7] text-white text-xs font-semibold rounded-xl shadow-xs transition-all cursor-pointer"
-          >
-            <span>+ Add Your First Report</span>
-          </button>
+          <div className="relative z-10 pt-2">
+            <button
+              onClick={onOpenAddReport}
+              className="btn-primary inline-flex items-center space-x-2 px-5 py-3 text-white text-sm sm:text-base font-semibold rounded-xl shadow-xs cursor-pointer"
+            >
+              <span>+ Add Your First Report</span>
+            </button>
+          </div>
         </div>
       </div>
     )
@@ -212,31 +407,41 @@ export default function TrendsView({ onOpenAddReport }) {
   // ----------------------------------------------------
   if (!summaryData.hasEligibleTests) {
     return (
-      <div className="space-y-6 max-w-4xl antialiased">
-        <div className="border-b border-stone-200/80 pb-5">
-          <h2 className="text-2xl font-bold tracking-tight text-stone-900">Trends</h2>
-          <p className="text-xs text-stone-500 font-medium mt-0.5">
-            Track how your measurements change across reports
-          </p>
+      <div className="space-y-6 antialiased">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-stone-200/80 dark:border-slate-800 pb-6">
+          <div className="flex items-center space-x-3.5">
+            <div className="w-11 h-11 rounded-2xl bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 text-[#5B3FE0] text-2xl font-black flex items-center justify-center shrink-0">
+              📈
+            </div>
+            <div>
+              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-stone-900 dark:text-slate-100">
+                Measurement Trends
+              </h2>
+              <p className="text-sm sm:text-base text-stone-500 dark:text-slate-400 font-medium mt-1">
+                Chronological trajectories for repeated laboratory observations.
+              </p>
+            </div>
+          </div>
         </div>
 
-        <div className="bg-white border border-stone-200/80 rounded-2xl p-10 text-center space-y-5 max-w-xl mx-auto my-8 shadow-xs">
-          <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 border border-amber-200 text-xl flex items-center justify-center mx-auto">
+        <div className="relative overflow-hidden bg-white dark:bg-[#131B2E] border border-stone-200/80 dark:border-slate-800 rounded-3xl p-8 sm:p-12 text-center space-y-5 max-w-xl mx-auto my-8 shadow-xs">
+          <div className="watermark-glyph select-none pointer-events-none opacity-40">Δ</div>
+          <div className="relative z-10 w-16 h-16 rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-900/60 text-3xl flex items-center justify-center mx-auto">
             ⏳
           </div>
-          <div className="space-y-2">
-            <h3 className="text-base font-bold text-stone-900">
+          <div className="relative z-10 space-y-2">
+            <h3 className="text-lg sm:text-xl font-bold text-stone-900 dark:text-slate-100">
               Insufficient Repeated Measurements
             </h3>
-            <p className="text-xs text-stone-500 max-w-md mx-auto leading-relaxed">
-              Trends require at least 2 numeric measurements with compatible units for the same test. You currently have {summaryData.totalReportsCount} {summaryData.totalReportsCount === 1 ? 'report' : 'reports'}, but none share repeated markers yet.
+            <p className="text-sm sm:text-base text-stone-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
+              Add another report containing the same measurement to unlock Trends. You currently have {summaryData.totalReportsCount} {summaryData.totalReportsCount === 1 ? 'report' : 'reports'}, but none share repeated markers with compatible units yet.
             </p>
           </div>
 
-          <div className="pt-2">
+          <div className="relative z-10 pt-2">
             <button
               onClick={onOpenAddReport}
-              className="inline-flex items-center space-x-1.5 px-4 py-2 bg-[#5B3FE0] hover:bg-[#4d34c7] text-white text-xs font-semibold rounded-xl shadow-xs transition-all cursor-pointer"
+              className="btn-primary inline-flex items-center space-x-2 px-5 py-3 text-white text-sm sm:text-base font-semibold rounded-xl shadow-xs cursor-pointer"
             >
               <span>+ Add Another Report</span>
             </button>
@@ -249,162 +454,166 @@ export default function TrendsView({ onOpenAddReport }) {
   const yDomain = activeUnitGroup ? computeYAxisDomain(activeUnitGroup.points) : [0, 100]
 
   return (
-    <div className="space-y-6 max-w-5xl antialiased">
-      {/* 1. Header & Quick Action */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-stone-200/80 pb-5">
-        <div>
-          <div className="flex items-center space-x-2">
-            <h2 className="text-2xl font-bold tracking-tight text-stone-900">Trends</h2>
-            <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-[#5B3FE0]/10 text-[#5B3FE0] rounded-md">
-              Descriptive
-            </span>
+    <div className="space-y-6 sm:space-y-8 antialiased">
+      {/* 1. Header & Branding */}
+      <div className="border-b border-stone-200/80 dark:border-slate-800 pb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex items-center space-x-3.5">
+          <div className="w-11 h-11 rounded-2xl bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 text-[#5B3FE0] text-2xl font-black flex items-center justify-center shrink-0">
+            📈
           </div>
-          <p className="text-xs text-stone-500 font-medium mt-0.5">
-            Track how your measurements change across reports
-          </p>
+          <div>
+            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-stone-900 dark:text-slate-100">
+              Measurement Trends
+            </h2>
+            <p className="text-sm sm:text-base text-stone-500 dark:text-slate-400 font-medium mt-1">
+              Chronological trajectories for repeated laboratory observations.
+            </p>
+          </div>
         </div>
-
         <button
           onClick={onOpenAddReport}
-          className="inline-flex items-center justify-center space-x-2 px-4 py-2.5 bg-white hover:bg-stone-50 border border-stone-200 text-stone-700 hover:text-stone-900 text-xs font-semibold rounded-xl shadow-2xs transition-all cursor-pointer"
+          className="btn-primary inline-flex items-center justify-center space-x-2 px-5 py-2.5 sm:py-3 text-white text-sm sm:text-base font-semibold rounded-xl shadow-xs cursor-pointer self-start sm:self-auto"
         >
-          <span>+</span>
+          <span className="text-base leading-none">+</span>
           <span>Add Report</span>
         </button>
       </div>
 
-      {/* 2. Top Summary Metrics Strip */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {/* Metric 1: Tracked Tests */}
-        <div className="bg-white border border-stone-200/80 rounded-xl p-4 shadow-2xs">
-          <span className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider block">
+      {/* 2. Top Metric Strip */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        <div className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-5 sm:p-6 card-interactive space-y-1.5">
+          <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-stone-500 dark:text-slate-400 block">
             Tracked Tests
           </span>
-          <span className="text-2xl font-black text-stone-900 mt-1 block">
-            {summaryData.eligibleTests.length}
-          </span>
-          <span className="text-[10px] text-stone-400">≥ 2 numeric observations</span>
+          <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-stone-900 dark:text-slate-100 font-mono">
+            {formatValue(summaryData.eligibleTests.length)}
+          </div>
+          <p className="text-xs sm:text-sm text-stone-400 dark:text-slate-500 font-medium">Tests with ≥2 repeated points</p>
         </div>
 
-        {/* Metric 2: Reports Used */}
-        <div className="bg-white border border-stone-200/80 rounded-xl p-4 shadow-2xs">
-          <span className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider block">
+        <div className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-5 sm:p-6 card-interactive space-y-1.5">
+          <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-stone-500 dark:text-slate-400 block">
             Reports Used
           </span>
-          <span className="text-2xl font-black text-stone-900 mt-1 block">
-            {summaryData.contributingReportsCount}
-          </span>
-          <span className="text-[10px] text-stone-400">of {summaryData.totalReportsCount} total reports</span>
+          <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#5B3FE0] dark:text-[#8266FA] font-mono">
+            {formatValue(summaryData.totalReportsCount)}
+          </div>
+          <p className="text-xs sm:text-sm text-stone-400 dark:text-slate-500 font-medium">Total historical reports</p>
         </div>
 
-        {/* Metric 3: Selected Test */}
-        <div className="bg-white border border-stone-200/80 rounded-xl p-4 shadow-2xs">
-          <span className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider block">
+        <div className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-5 sm:p-6 card-interactive space-y-1.5">
+          <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-stone-500 dark:text-slate-400 block">
             Selected Test
           </span>
-          <span className="text-base font-bold text-stone-900 mt-1 block truncate" title={currentTest?.testName}>
-            {currentTest?.testName || '—'}
-          </span>
-          <span className="text-[10px] text-[#5B3FE0] font-mono">
-            {activeUnitGroup?.unitLabel || 'No unit'}
-          </span>
+          <div className="text-lg sm:text-xl font-extrabold text-stone-900 dark:text-slate-100 truncate pt-1">
+            {currentTest?.testName || 'None'}
+          </div>
+          <p className="text-xs sm:text-sm text-stone-400 dark:text-slate-500 font-medium">
+            {activeUnitGroup?.unitLabel ? `Unit: ${activeUnitGroup.unitLabel}` : 'Active plot'}
+          </p>
         </div>
 
-        {/* Metric 4: Data Points */}
-        <div className="bg-white border border-stone-200/80 rounded-xl p-4 shadow-2xs">
-          <span className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider block">
-            Data Points
+        <div className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-5 sm:p-6 card-interactive space-y-1.5">
+          <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-stone-500 dark:text-slate-400 block">
+            Plotted Points
           </span>
-          <span className="text-2xl font-black text-stone-900 mt-1 block">
-            {activeUnitGroup?.pointsCount ?? 0}
-          </span>
-          <span className="text-[10px] text-stone-400">plotted chronologically</span>
+          <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-emerald-600 dark:text-emerald-400 font-mono">
+            {formatValue(activeUnitGroup?.pointsCount || 0)}
+          </div>
+          <p className="text-xs sm:text-sm text-stone-400 dark:text-slate-500 font-medium">Observations on trend line</p>
         </div>
       </div>
 
-      {/* 3. Test Selector & Search Bar */}
-      <div className="bg-white border border-stone-200/80 rounded-2xl p-4 shadow-xs space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div className="text-xs font-bold uppercase tracking-wider text-stone-700">
-            Select Measurement to Plot
+      {/* 3. Searchable Test Selector Strip */}
+      <div className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-3xl p-5 sm:p-6 lg:p-7 shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h3 className="text-base sm:text-lg font-bold text-stone-900 dark:text-slate-100">
+              Select Measurement to Plot
+            </h3>
+            <p className="text-xs sm:text-sm text-stone-500 dark:text-slate-400 mt-0.5">
+              Choose from tests with repeated measurements
+            </p>
           </div>
-          {summaryData.eligibleTests.length > 5 && (
-            <input
-              type="text"
-              placeholder="Search tests..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="px-2.5 py-1 bg-stone-50 border border-stone-200 rounded-lg text-xs text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-1 focus:ring-[#5B3FE0] w-full sm:w-48"
-            />
+          {summaryData.eligibleTests.length > 3 && (
+            <div className="w-full sm:w-64">
+              <input
+                type="text"
+                placeholder="Filter tests..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-3.5 py-2 bg-stone-50 dark:bg-slate-900/90 border border-stone-200 dark:border-slate-700 rounded-xl text-sm text-stone-900 dark:text-slate-100 placeholder-stone-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0] focus:border-[#5B3FE0] transition-all"
+              />
+            </div>
           )}
         </div>
 
-        {/* Horizontal scrollable pills */}
-        <div className="flex flex-wrap gap-2 pt-1">
-          {filteredTests.map((t) => {
-            const isSelected = t.testName === selectedTestName
+        {/* Test Selector Pills */}
+        <div className="flex flex-wrap gap-2.5 pt-1">
+          {filteredTests.map((test) => {
+            const isSelected = selectedTestName === test.testName
             return (
               <button
-                key={t.testName}
-                onClick={() => handleSelectTest(t)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center space-x-2 ${
+                key={test.testName}
+                onClick={() => handleSelectTest(test)}
+                className={`px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl text-sm sm:text-base font-semibold transition-all duration-150 cursor-pointer flex items-center space-x-2 btn-press ${
                   isSelected
-                    ? 'bg-[#5B3FE0] text-white shadow-xs'
-                    : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border border-stone-200/80'
+                    ? 'bg-[#5B3FE0] text-white shadow-xs scale-[1.02]'
+                    : 'bg-stone-50 dark:bg-slate-900/80 hover:bg-stone-100 dark:hover:bg-slate-800 hover:border-stone-300 dark:hover:border-slate-700 text-stone-700 dark:text-slate-300 border border-stone-200 dark:border-slate-800'
                 }`}
               >
-                <span>{t.testName}</span>
+                <span>{test.testName}</span>
                 <span
-                  className={`text-[10px] px-1.5 py-0.2 rounded-md ${
+                  className={`px-2 py-0.5 text-xs rounded-md transition-colors ${
                     isSelected
-                      ? 'bg-white/20 text-white'
-                      : 'bg-stone-200/80 text-stone-500'
+                      ? 'bg-white/25 text-white'
+                      : 'bg-stone-200/80 dark:bg-slate-800 text-stone-600 dark:text-slate-400'
                   }`}
                 >
-                  {t.pointsCount}
+                  {test.pointsCount}
                 </span>
               </button>
             )
           })}
           {filteredTests.length === 0 && (
-            <p className="text-xs text-stone-400 py-1">No matching tests found.</p>
+            <p className="text-sm text-stone-400 dark:text-slate-500 py-1">No matching tests found.</p>
           )}
         </div>
       </div>
 
       {/* 4. Chart Card with Unit Selector & Mathematical Direction Strip */}
       {currentTest && activeUnitGroup && (
-        <div className="bg-white border border-stone-200/80 rounded-2xl shadow-xs overflow-hidden space-y-4 p-6">
+        <div className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-3xl shadow-xs overflow-hidden space-y-6 p-5 sm:p-7 lg:p-8">
           {/* Chart Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-stone-100 pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-stone-100 dark:border-slate-800 pb-4">
             <div>
-              <div className="flex items-center space-x-2">
-                <h3 className="text-lg font-bold text-stone-900">
+              <div className="flex items-center space-x-3">
+                <h3 className="text-xl sm:text-2xl font-bold text-stone-900 dark:text-slate-100">
                   {currentTest.testName}
                 </h3>
                 {activeUnitGroup.unit && (
-                  <span className="px-2 py-0.5 text-xs font-mono font-semibold bg-stone-100 text-stone-600 rounded-md">
+                  <span className="px-3 py-1 text-sm font-mono font-semibold bg-stone-100 dark:bg-slate-800 text-stone-600 dark:text-slate-300 rounded-lg">
                     {activeUnitGroup.unit}
                   </span>
                 )}
               </div>
-              <p className="text-xs text-stone-400 mt-0.5">
+              <p className="text-sm text-stone-500 dark:text-slate-400 mt-1">
                 Observed values over time across laboratory reports
               </p>
             </div>
 
             {/* Unit Selector (if multiple units exist for this test) */}
             {currentTest.unitGroups.length > 1 && (
-              <div className="flex items-center space-x-2 bg-stone-50 p-1 rounded-xl border border-stone-200">
-                <span className="text-[11px] font-semibold text-stone-500 pl-2">Unit:</span>
+              <div className="flex flex-wrap items-center gap-2 bg-stone-50 dark:bg-slate-900/80 p-2 rounded-2xl border border-stone-200 dark:border-slate-800">
+                <span className="text-xs font-semibold text-stone-500 dark:text-slate-400 pl-2">Unit:</span>
                 {currentTest.unitGroups.map((g) => (
                   <button
                     key={g.unitLabel}
                     onClick={() => setSelectedUnit(g.unitLabel)}
-                    className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+                    className={`min-h-[44px] sm:min-h-0 px-3.5 py-2 sm:py-1.5 text-xs sm:text-sm font-semibold rounded-xl transition-all cursor-pointer btn-press flex items-center ${
                       activeUnitGroup.unitLabel === g.unitLabel
                         ? 'bg-[#5B3FE0] text-white shadow-2xs'
-                        : 'text-stone-600 hover:text-stone-900'
+                        : 'text-stone-600 dark:text-slate-400 hover:text-stone-900 dark:hover:text-slate-100'
                     }`}
                   >
                     {g.unitLabel} ({g.pointsCount})
@@ -416,151 +625,206 @@ export default function TrendsView({ onOpenAddReport }) {
 
           {/* Unit Mismatch Exclusion Warning Banner */}
           {excludedInfo && (
-            <div className="p-3 bg-amber-50/90 border border-amber-200/80 rounded-xl text-xs text-amber-900 flex items-start space-x-2">
-              <span className="text-amber-500 font-bold shrink-0">ℹ️</span>
+            <div className="p-4 bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-900/60 rounded-2xl text-sm text-amber-900 dark:text-amber-300 flex items-start space-x-2.5 animate-fade-in">
+              <span className="text-amber-500 font-bold shrink-0 text-base">ℹ️</span>
               <p className="leading-relaxed">
                 <span className="font-semibold">{excludedInfo.count} {excludedInfo.count === 1 ? 'measurement' : 'measurements'}</span> excluded from this chart because different units were detected ({excludedInfo.units}). Units are never combined onto the same line.
               </p>
             </div>
           )}
 
-          {/* Direction Summary Badges (Section 14) */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-stone-50/70 p-3.5 rounded-xl border border-stone-200/60 text-xs">
+          {/* Direction Summary Badges */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 bg-stone-50/70 dark:bg-[#0F172A]/70 p-5 rounded-2xl border border-stone-200/60 dark:border-slate-800 text-xs sm:text-sm">
             {/* First Value */}
             <div>
-              <span className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider block">
+              <span className="text-xs sm:text-sm font-bold text-stone-500 dark:text-slate-400 uppercase tracking-wider block">
                 First Recorded
               </span>
-              <div className="font-bold text-stone-800 mt-0.5 font-mono">
-                {activeUnitGroup.first.value} {activeUnitGroup.unit}
+              <div className="font-bold text-stone-900 dark:text-slate-100 mt-1 font-mono text-base sm:text-lg">
+                {formatValue(activeUnitGroup.first.value)} {activeUnitGroup.unit}
               </div>
-              <span className="text-[10px] text-stone-400">
+              <span className="text-xs text-stone-400 dark:text-slate-500 font-mono mt-0.5 block">
                 {activeUnitGroup.first.formattedDate}
               </span>
             </div>
 
             {/* Latest Value */}
             <div>
-              <span className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider block">
+              <span className="text-xs sm:text-sm font-bold text-stone-500 dark:text-slate-400 uppercase tracking-wider block">
                 Latest Recorded
               </span>
-              <div className="font-bold text-stone-800 mt-0.5 font-mono">
-                {activeUnitGroup.latest.value} {activeUnitGroup.unit}
+              <div className="font-bold text-stone-900 dark:text-slate-100 mt-1 font-mono text-base sm:text-lg">
+                {formatValue(activeUnitGroup.latest.value)} {activeUnitGroup.unit}
               </div>
-              <span className="text-[10px] text-stone-400">
+              <span className="text-xs text-stone-400 dark:text-slate-500 font-mono mt-0.5 block">
                 {activeUnitGroup.latest.formattedDate}
               </span>
             </div>
 
-            {/* Net Delta */}
+            {/* Net Delta with formatting */}
             <div>
-              <span className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider block">
+              <span className="text-xs sm:text-sm font-bold text-stone-500 dark:text-slate-400 uppercase tracking-wider block">
                 Net Change (Δ)
               </span>
-              <div className="font-black text-stone-900 mt-0.5 font-mono flex items-center space-x-1">
-                <span>
-                  {activeUnitGroup.netDelta > 0 ? `+${activeUnitGroup.netDelta}` : activeUnitGroup.netDelta}
-                </span>
-                <span className="text-xs">
-                  {activeUnitGroup.direction === 'up' && '↑'}
-                  {activeUnitGroup.direction === 'down' && '↓'}
-                  {activeUnitGroup.direction === 'neutral' && '='}
-                </span>
+              <div className="font-black text-stone-900 dark:text-slate-100 mt-1 font-mono text-base sm:text-lg flex items-center space-x-1.5">
+                <span>Δ {formatDelta(activeUnitGroup.netDelta)}</span>
+                {activeUnitGroup.direction === 'up' && (
+                  <span className="text-sm font-bold inline-block animate-arrow-up text-stone-700 dark:text-slate-300">↑</span>
+                )}
+                {activeUnitGroup.direction === 'down' && (
+                  <span className="text-sm font-bold inline-block animate-arrow-down text-stone-700 dark:text-slate-300">↓</span>
+                )}
+                {activeUnitGroup.direction === 'neutral' && (
+                  <span className="text-sm font-bold inline-block text-stone-700 dark:text-slate-300">=</span>
+                )}
               </div>
-              <span className="text-[10px] text-stone-400">Latest − First</span>
+              <span className="text-xs text-stone-400 dark:text-slate-500 font-mono mt-0.5 block">Latest − First</span>
             </div>
 
-            {/* Percentage Change */}
+            {/* Percentage Change with formatting */}
             <div>
-              <span className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider block">
+              <span className="text-xs sm:text-sm font-bold text-stone-500 dark:text-slate-400 uppercase tracking-wider block">
                 Percentage Change
               </span>
-              <div className="font-bold text-stone-800 mt-0.5 font-mono">
+              <div className="font-bold text-stone-900 dark:text-slate-100 mt-1 font-mono text-base sm:text-lg">
                 {activeUnitGroup.percentUnavailable
                   ? 'Unavailable (base 0)'
-                  : `${activeUnitGroup.percentChange > 0 ? `+${activeUnitGroup.percentChange}` : activeUnitGroup.percentChange}%`}
+                  : formatPercent(activeUnitGroup.percentChange)}
               </div>
-              <span className="text-[10px] text-stone-400">Relative trajectory</span>
+              <span className="text-xs text-stone-400 dark:text-slate-500 font-mono mt-0.5 block">Relative trajectory</span>
             </div>
           </div>
 
-          {/* Recharts Responsive Line Chart */}
-          <div className="w-full pt-4 pb-2">
-            <div className="w-full h-80">
+          {/* Recharts Responsive Line Chart with Animation */}
+          <div className="w-full pt-4 pb-2 space-y-4">
+            <div className="w-full h-80 sm:h-96">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                   data={activeUnitGroup.points}
                   margin={{ top: 15, right: 25, left: -10, bottom: 20 }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke={theme === 'dark' ? '#1e293b' : '#f1f5f9'} vertical={false} />
                   <XAxis
-                    dataKey="formattedDate"
-                    stroke="#94a3b8"
-                    tick={{ fontSize: 11, fill: '#64748b' }}
+                    dataKey="chartTick"
+                    stroke={theme === 'dark' ? '#475569' : '#94a3b8'}
+                    tick={{ fontSize: 12, fill: theme === 'dark' ? '#94a3b8' : '#64748b' }}
                     tickLine={false}
+                    interval="preserveStartEnd"
                     dy={10}
                   />
                   <YAxis
                     domain={yDomain}
-                    stroke="#94a3b8"
-                    tick={{ fontSize: 11, fill: '#64748b' }}
+                    stroke={theme === 'dark' ? '#475569' : '#94a3b8'}
+                    tick={{ fontSize: 13, fill: theme === 'dark' ? '#94a3b8' : '#64748b' }}
                     tickLine={false}
                     dx={-5}
                   />
-                  <Tooltip content={<TrendTooltip unit={activeUnitGroup.unit} />} />
+                  <Tooltip content={<TrendTooltip unit={activeUnitGroup.unit} theme={theme} />} />
                   <Line
-                    type="monotone"
+                    type="linear"
                     dataKey="value"
                     stroke="#5B3FE0"
                     strokeWidth={2.5}
-                    dot={{
-                      r: 5,
-                      fill: '#5B3FE0',
-                      stroke: '#ffffff',
-                      strokeWidth: 2,
-                    }}
-                    activeDot={{
-                      r: 7,
-                      fill: '#5B3FE0',
-                      stroke: '#c4b5fd',
-                      strokeWidth: 3,
-                    }}
                     isAnimationActive={true}
-                    animationDuration={300}
+                    animationDuration={450}
+                    dot={<CustomTrendDot theme={theme} />}
+                    activeDot={<CustomTrendDot active theme={theme} />}
                   />
                 </LineChart>
               </ResponsiveContainer>
             </div>
+
+            {/* Discrete Observation Range Status Legend */}
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2.5 pt-3.5 text-xs text-stone-500 dark:text-slate-400 border-t border-stone-100 dark:border-slate-800">
+              <div className="flex items-center space-x-1.5">
+                <svg width="12" height="12" viewBox="0 0 12 12" className="shrink-0">
+                  <circle cx="6" cy="6" r="4.5" fill="#5B3FE0" />
+                </svg>
+                <span>Within provided range</span>
+              </div>
+              <div className="flex items-center space-x-1.5">
+                <svg width="12" height="12" viewBox="0 0 12 12" className="shrink-0">
+                  <circle cx="6" cy="6" r="4.5" fill="#D97706" />
+                  <polygon points="3.8,4.8 8.2,4.8 6,7.8" fill="#FFFFFF" />
+                </svg>
+                <span>Below provided range</span>
+              </div>
+              <div className="flex items-center space-x-1.5">
+                <svg width="12" height="12" viewBox="0 0 12 12" className="shrink-0">
+                  <circle cx="6" cy="6" r="4.5" fill="#D97706" />
+                  <polygon points="6,4.2 3.8,7.2 8.2,7.2" fill="#FFFFFF" />
+                </svg>
+                <span>Above provided range</span>
+              </div>
+              <div className="flex items-center space-x-1.5">
+                <svg width="12" height="12" viewBox="0 0 12 12" className="shrink-0">
+                  <circle cx="6" cy="6" r="4" fill="none" stroke="#94A3B8" strokeWidth="2" />
+                </svg>
+                <span>Range unavailable</span>
+              </div>
+            </div>
           </div>
 
-          {/* 5. Chronological Data Point History (Section 12) */}
-          <div className="border-t border-stone-100 pt-5 space-y-3">
-            <div className="flex items-center justify-between">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-stone-700">
-                Measurement Timeline ({activeUnitGroup.points.length})
-              </h4>
-              <span className="text-[11px] text-stone-400">Chronological history</span>
-            </div>
+          {/* Chronological Data History Strip */}
+          <div className="border-t border-stone-100 dark:border-slate-800 pt-6 space-y-4">
+            <h4 className="text-sm sm:text-base font-bold uppercase tracking-wider text-stone-700 dark:text-slate-300">
+              Chronological Observations ({activeUnitGroup.pointsCount})
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+              {activeUnitGroup.points.map((pt, idx) => {
+                let statusLabel = 'Range unavailable'
+                let badgeStyle = 'text-stone-600 dark:text-slate-400 bg-stone-100 dark:bg-slate-800'
+                if (pt.rangeStatusKey === 'within') {
+                  statusLabel = 'Within range'
+                  badgeStyle = 'text-[#5B3FE0] dark:text-[#8266FA] bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20'
+                } else if (pt.rangeStatusKey === 'below') {
+                  statusLabel = 'Below range'
+                  badgeStyle = 'text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 border border-amber-200/70 dark:border-amber-800/60'
+                } else if (pt.rangeStatusKey === 'above') {
+                  statusLabel = 'Above range'
+                  badgeStyle = 'text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 border border-amber-200/70 dark:border-amber-800/60'
+                }
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-              {activeUnitGroup.points.map((p, idx) => (
-                <div
-                  key={p.id || idx}
-                  className="bg-stone-50/70 border border-stone-200/80 rounded-xl p-3.5 space-y-1.5 transition-all hover:bg-white hover:border-[#5B3FE0]/40 shadow-2xs"
-                >
-                  <div className="flex items-center justify-between text-xs font-semibold text-stone-500">
-                    <span>Point #{idx + 1}</span>
-                    <span className="font-bold text-stone-800">{p.formattedDate}</span>
+                return (
+                  <div
+                    key={pt.id || idx}
+                    className="bg-stone-50/60 dark:bg-[#0F172A]/60 border border-stone-200/80 dark:border-slate-800 rounded-2xl p-4 sm:p-5 text-xs sm:text-sm space-y-2.5 card-interactive"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <span className="font-bold text-stone-900 dark:text-slate-100 text-sm sm:text-base">{pt.formattedDate}</span>
+                        {pt.isDuplicateDateAndLab && (
+                          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-stone-200/80 dark:bg-slate-800 text-stone-600 dark:text-slate-400 font-mono">
+                            #{pt.dateLabIndex}
+                          </span>
+                        )}
+                      </div>
+                      <span className="font-black text-stone-900 dark:text-slate-100 font-mono text-base sm:text-lg">
+                        {formatValue(pt.value)} {activeUnitGroup.unit}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs sm:text-sm text-stone-500 dark:text-slate-400">
+                      <div className="flex items-center space-x-1.5 truncate max-w-[150px]">
+                        <span className="truncate">{cleanLabName(pt.labName)}</span>
+                        {pt.sourceType === 'demo' && (
+                          <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded bg-violet-50 dark:bg-violet-950/60 text-[#5B3FE0] dark:text-[#8266FA] border border-violet-200/70 dark:border-violet-800/60 shrink-0">
+                            DEMO
+                          </span>
+                        )}
+                      </div>
+                      <span className="font-mono text-stone-600 dark:text-slate-400">
+                        Ref: {pt.refDisplay || 'Not provided'}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between pt-1 border-t border-stone-200/60 dark:border-slate-800/70">
+                      <span className="text-[11px] text-stone-400 dark:text-slate-500 font-medium">Range Status</span>
+                      <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-md ${badgeStyle}`}>
+                        {statusLabel}
+                      </span>
+                    </div>
                   </div>
-                  <div className="text-base font-extrabold text-stone-900 font-mono">
-                    {p.value} <span className="text-xs font-medium text-stone-500">{activeUnitGroup.unit}</span>
-                  </div>
-                  <div className="text-[11px] text-stone-400 flex items-center justify-between pt-1 border-t border-stone-200/50">
-                    <span className="truncate max-w-28" title={p.labName}>{p.labName}</span>
-                    <span className="font-mono text-stone-600">Ref: {p.refDisplay}</span>
-                  </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         </div>
