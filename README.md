@@ -206,7 +206,8 @@ LabDelta/
 │   ├── package.json                 # Frontend dependencies and build scripts
 │   └── vite.config.js               # Vite build configuration
 ├── scripts/
-│   └── generate_fresh_demo_reports.py # PyMuPDF script generating demo PDFs
+│   ├── generate_fresh_demo_reports.py # PyMuPDF script generating demo PDFs
+│   └── run.py                       # Unified local development runner
 ├── supabase/
 │   └── schema.sql                   # Database schema, foreign keys, and RLS policies
 ├── tests/                           # Comprehensive test suites
