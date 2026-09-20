@@ -79,9 +79,9 @@ export default function AuthHeroAnimation({ theme }) {
       {/* Visual Workflow Header Eyebrow */}
       <div className="text-center mb-2.5 sm:mb-3 space-y-0.5">
         <div className="inline-flex items-center space-x-2 px-2 py-0.5 rounded-full bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 border border-[#5B3FE0]/20 text-[#5B3FE0] dark:text-[#8266FA] text-[10px] sm:text-[11px] font-bold uppercase tracking-wider">
-          <span>Intelligence Pipeline</span>
+          <span>Report Diff Engine</span>
           <span>•</span>
-          <span>Automated Δ Comparison</span>
+          <span>Previous → Current → Δ</span>
         </div>
         <h2 className="text-sm sm:text-base xl:text-lg font-black text-stone-800 dark:text-slate-100 tracking-tight">
           See What Changed Between Reports
