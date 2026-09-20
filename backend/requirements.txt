@@ -1,7 +1,9 @@
-﻿fastapi
+fastapi
 uvicorn
 httpx
 python-dotenv
 PyMuPDF
 groq
 python-multipart
+pydantic>=2.0
+

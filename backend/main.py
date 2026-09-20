@@ -1,18 +1,39 @@
+import sys
+from pathlib import Path
+
+# Ensure repository root and backend directory are in sys.path
+_repo_root = str(Path(__file__).resolve().parent.parent)
+if _repo_root not in sys.path:
+    sys.path.insert(0, _repo_root)
+_backend_dir = str(Path(__file__).resolve().parent)
+if _backend_dir not in sys.path:
+    sys.path.insert(0, _backend_dir)
+
 from fastapi import Depends, FastAPI, File, HTTPException, UploadFile, status
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.auth import get_current_user
+from backend.config import FRONTEND_URL
 from backend.extraction import call_groq_extraction, extract_text_from_pdf
 
 app = FastAPI(title="LabDelta Backend")
 
+# Production-ready CORS origins: local development + configured production URL
+allowed_origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
+if FRONTEND_URL:
+    for url in FRONTEND_URL.split(","):
+        cleaned_origin = url.strip().rstrip("/")
+        if cleaned_origin and cleaned_origin not in allowed_origins:
+            allowed_origins.append(cleaned_origin)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-    ],
-    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
+    allow_origins=allowed_origins,
+    allow_origin_regex=r"^(https?://(localhost|127\.0\.0\.1)(:\d+)?|https://.*\.vercel\.app)$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
