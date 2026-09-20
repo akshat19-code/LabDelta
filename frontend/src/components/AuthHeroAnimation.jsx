@@ -77,23 +77,23 @@ export default function AuthHeroAnimation({ theme }) {
       </div>
 
       {/* Visual Workflow Header Eyebrow */}
-      <div className="text-center mb-4 sm:mb-5 space-y-1">
-        <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 border border-[#5B3FE0]/20 text-[#5B3FE0] dark:text-[#8266FA] text-xs font-bold uppercase tracking-wider">
+      <div className="text-center mb-3 sm:mb-3.5 space-y-0.5">
+        <div className="inline-flex items-center space-x-2 px-2.5 py-0.5 rounded-full bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 border border-[#5B3FE0]/20 text-[#5B3FE0] dark:text-[#8266FA] text-[11px] font-bold uppercase tracking-wider">
           <span>Intelligence Pipeline</span>
           <span>•</span>
           <span>Automated Δ Comparison</span>
         </div>
-        <h2 className="text-lg sm:text-xl xl:text-2xl font-black text-stone-800 dark:text-slate-100 tracking-tight">
+        <h2 className="text-base sm:text-lg xl:text-xl font-black text-stone-800 dark:text-slate-100 tracking-tight">
           See What Changed Between Reports
         </h2>
       </div>
 
       {/* Twin Report Cards with Central Comparison Node & Connector Network */}
       <div className="relative">
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-center gap-3 lg:gap-3.5 xl:gap-4 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-center gap-2.5 lg:gap-3 xl:gap-3.5 relative z-10">
           {/* CARD 1: PREVIOUS REPORT */}
           <div
-            className={`bg-white/95 dark:bg-[#131B2E]/95 backdrop-blur-xs border border-stone-200/90 dark:border-slate-800 rounded-2xl p-3 sm:p-3.5 xl:p-4 shadow-lg shadow-stone-200/50 dark:shadow-black/50 space-y-2 sm:space-y-2.5 transition-all duration-500 ${
+            className={`bg-white/95 dark:bg-[#131B2E]/95 backdrop-blur-xs border border-stone-200/90 dark:border-slate-800 rounded-2xl p-2.5 sm:p-3 xl:p-3.5 shadow-lg shadow-stone-200/50 dark:shadow-black/50 space-y-1.5 sm:space-y-2 transition-all duration-500 ${
               step >= 1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             }`}
           >
@@ -159,28 +159,28 @@ export default function AuthHeroAnimation({ theme }) {
 
           {/* CENTRAL LABΔ COMPARISON ENGINE NODE */}
           <div className="hidden md:flex flex-col items-center justify-center px-1 z-20">
-            <div className="text-[9px] font-bold uppercase tracking-wider text-stone-400 dark:text-slate-500 mb-1.5">
+            <div className="text-[9px] font-bold uppercase tracking-wider text-stone-400 dark:text-slate-500 mb-1">
               COMPARE
             </div>
             <div
-              className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white dark:bg-[#131B2E] border-2 border-[#5B3FE0] flex items-center justify-center transition-all duration-500 ${
+              className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white dark:bg-[#131B2E] border-2 border-[#5B3FE0] flex items-center justify-center transition-all duration-500 ${
                 step >= 5
                   ? 'shadow-lg shadow-[#5B3FE0]/30 scale-105'
                   : 'scale-95 opacity-70 border-stone-300 dark:border-slate-700'
               } ${step >= 8 && !reducedMotion ? 'animate-pulse-subtle' : ''}`}
             >
-              <span className="text-xl sm:text-2xl font-black text-[#5B3FE0] dark:text-[#8266FA] leading-none">
+              <span className="text-lg sm:text-xl font-black text-[#5B3FE0] dark:text-[#8266FA] leading-none">
                 Δ
               </span>
             </div>
-            <div className="text-[9px] font-bold uppercase tracking-wider text-[#5B3FE0] dark:text-[#8266FA] mt-1.5 font-mono">
+            <div className="text-[9px] font-bold uppercase tracking-wider text-[#5B3FE0] dark:text-[#8266FA] mt-1 font-mono">
               ENGINE
             </div>
           </div>
 
           {/* CARD 2: CURRENT REPORT */}
           <div
-            className={`bg-white/95 dark:bg-[#131B2E]/95 backdrop-blur-xs border border-stone-200/90 dark:border-slate-800 rounded-2xl p-3 sm:p-3.5 xl:p-4 shadow-lg shadow-stone-200/50 dark:shadow-black/50 space-y-2 sm:space-y-2.5 transition-all duration-500 ${
+            className={`bg-white/95 dark:bg-[#131B2E]/95 backdrop-blur-xs border border-stone-200/90 dark:border-slate-800 rounded-2xl p-2.5 sm:p-3 xl:p-3.5 shadow-lg shadow-stone-200/50 dark:shadow-black/50 space-y-1.5 sm:space-y-2 transition-all duration-500 ${
               step >= 2 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             }`}
           >
@@ -332,13 +332,13 @@ export default function AuthHeroAnimation({ theme }) {
 
       {/* REVEAL BRIDGE: COMPUTED DELTA & SPARKLINE RESULT */}
       <div
-        className={`mt-3 sm:mt-3.5 bg-gradient-to-r from-violet-50/90 via-white to-stone-50/90 dark:from-[#131B2E] dark:via-[#162038] dark:to-[#0F172A] border border-[#5B3FE0]/30 dark:border-slate-800 rounded-2xl p-3 sm:p-3.5 xl:p-4 shadow-lg shadow-[#5B3FE0]/5 transition-all duration-500 ${
+        className={`mt-2.5 sm:mt-3 bg-gradient-to-r from-violet-50/90 via-white to-stone-50/90 dark:from-[#131B2E] dark:via-[#162038] dark:to-[#0F172A] border border-[#5B3FE0]/30 dark:border-slate-800 rounded-2xl p-2.5 sm:p-3 xl:p-3.5 shadow-lg shadow-[#5B3FE0]/5 transition-all duration-500 ${
           step >= 6 ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-2'
         }`}
       >
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 sm:gap-3.5">
           {/* Delta calculation */}
-          <div className="space-y-0.5 sm:space-y-1">
+          <div className="space-y-0.5">
             <div className="flex items-center space-x-2">
               <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-slate-400">
                 Matched: <span className="text-stone-900 dark:text-slate-100 font-black">Hemoglobin</span>
@@ -347,25 +347,25 @@ export default function AuthHeroAnimation({ theme }) {
                 CHANGED
               </span>
             </div>
-            <div className="flex items-baseline space-x-2.5">
-              <div className="text-xl sm:text-2xl xl:text-3xl font-black font-mono text-[#5B3FE0] dark:text-[#8266FA] tracking-tight">
+            <div className="flex items-baseline space-x-2">
+              <div className="text-lg sm:text-xl xl:text-2xl font-black font-mono text-[#5B3FE0] dark:text-[#8266FA] tracking-tight">
                 Δ −1.0 <span className="text-xs sm:text-sm font-semibold text-stone-400 dark:text-slate-500">g/dL</span>
               </div>
               <span className="text-xs sm:text-sm font-mono font-bold text-stone-600 dark:text-slate-400">
                 ↓ −7.2%
               </span>
             </div>
-            <p className="text-[11px] text-stone-400 dark:text-slate-500">
+            <p className="text-[10px] sm:text-[11px] text-stone-400 dark:text-slate-500">
               Shift from 13.8 g/dL (Jan) to 12.8 g/dL (Apr)
             </p>
           </div>
 
           {/* Animated Mini Trend Sparkline */}
-          <div className="w-full sm:w-44 xl:w-48 h-10 sm:h-12 flex flex-col justify-end">
+          <div className="w-full sm:w-40 xl:w-44 h-9 sm:h-11 flex flex-col justify-end">
             <span className="text-[9px] sm:text-[10px] font-bold uppercase text-stone-400 dark:text-slate-500 tracking-wider text-right mb-0.5 block">
               Trajectory
             </span>
-            <svg viewBox="0 0 160 40" className="w-full h-7 sm:h-8 overflow-visible">
+            <svg viewBox="0 0 160 40" className="w-full h-6 sm:h-7 overflow-visible">
               {/* Baseline reference dash */}
               <line
                 x1="0"
@@ -416,7 +416,7 @@ export default function AuthHeroAnimation({ theme }) {
 // Compact Mobile Banner for <= 640px devices
 export function CompactAuthHero() {
   return (
-    <div className="w-full max-w-sm sm:max-w-md bg-stone-50 dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-3.5 mb-4 shadow-2xs select-none">
+    <div className="w-full max-w-sm sm:max-w-md bg-stone-50 dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-3 mb-3 shadow-2xs select-none">
       <div className="flex items-center justify-between text-xs">
         <div className="flex items-center space-x-1.5 font-medium text-stone-600 dark:text-slate-300">
           <span className="font-bold text-[#5B3FE0]">LabΔ:</span>

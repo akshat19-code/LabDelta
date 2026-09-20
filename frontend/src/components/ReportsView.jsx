@@ -99,87 +99,87 @@ export default function ReportsView({ onOpenAddReport, onSelectReport, userId, s
   }
 
   return (
-    <div className="space-y-6 antialiased">
+    <div className="space-y-5 sm:space-y-6 antialiased">
       {/* Header & Primary Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-stone-200/80 dark:border-slate-800 pb-6">
-        <div className="flex items-center space-x-3.5">
-          <div className="w-11 h-11 rounded-2xl bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 text-[#5B3FE0] text-2xl font-black flex items-center justify-center shrink-0">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 border-b border-stone-200/80 dark:border-slate-800 pb-4 sm:pb-5">
+        <div className="flex items-center space-x-3">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 text-[#5B3FE0] text-xl sm:text-2xl font-black flex items-center justify-center shrink-0">
             📋
           </div>
           <div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-stone-900 dark:text-slate-100">
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-stone-900 dark:text-slate-100">
               Reports History
             </h2>
-            <p className="text-sm sm:text-base text-stone-500 dark:text-slate-400 font-medium mt-1">
+            <p className="text-xs sm:text-sm text-stone-500 dark:text-slate-400 font-medium mt-0.5">
               Your recorded laboratory panels and historical diagnostic records.
             </p>
           </div>
         </div>
-        <div className="flex items-center space-x-2.5">
+        <div className="flex items-center space-x-2">
           <button
             onClick={onOpenAddReport}
-            className="btn-primary inline-flex items-center justify-center space-x-2 px-5 py-2.5 sm:py-3 text-white text-sm sm:text-base font-semibold rounded-xl shadow-xs cursor-pointer"
+            className="btn-primary inline-flex items-center justify-center space-x-1.5 px-4 py-2 sm:py-2.5 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-xs cursor-pointer"
           >
-            <span className="text-base leading-none">+</span>
+            <span className="text-sm leading-none">+</span>
             <span>Add Report</span>
           </button>
         </div>
       </div>
 
       {error && (
-        <div className="p-4 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 rounded-2xl text-sm text-rose-700 dark:text-rose-300 animate-fade-in">
+        <div className="p-3.5 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 rounded-xl text-xs sm:text-sm text-rose-700 dark:text-rose-300 animate-fade-in">
           {error}
         </div>
       )}
 
       {loading ? (
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="bg-white dark:bg-[#131B2E] border border-stone-200/80 dark:border-slate-800 rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-pulse"
+              className="bg-white dark:bg-[#131B2E] border border-stone-200/80 dark:border-slate-800 rounded-2xl p-4 sm:p-4.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 animate-pulse"
             >
-              <div className="space-y-2">
-                <div className="flex items-center space-x-3">
-                  <div className="h-6 w-36 bg-stone-200 dark:bg-slate-700 rounded-md"></div>
-                  <div className="h-4 w-14 bg-stone-100 dark:bg-slate-800 rounded-md"></div>
+              <div className="space-y-1.5">
+                <div className="flex items-center space-x-2.5">
+                  <div className="h-5 w-32 bg-stone-200 dark:bg-slate-700 rounded-md"></div>
+                  <div className="h-3.5 w-12 bg-stone-100 dark:bg-slate-800 rounded-md"></div>
                 </div>
-                <div className="h-4 w-52 bg-stone-100 dark:bg-slate-800 rounded-md"></div>
+                <div className="h-3.5 w-44 bg-stone-100 dark:bg-slate-800 rounded-md"></div>
               </div>
-              <div className="flex items-center justify-between sm:justify-end sm:space-x-6 pt-3 sm:pt-0 border-t sm:border-t-0 border-stone-100 dark:border-slate-800">
+              <div className="flex items-center justify-between sm:justify-end sm:space-x-5 pt-2.5 sm:pt-0 border-t sm:border-t-0 border-stone-100 dark:border-slate-800">
                 <div className="space-y-1 text-left sm:text-right">
-                  <div className="h-5 w-28 bg-stone-200 dark:bg-slate-700 rounded-md"></div>
-                  <div className="h-3.5 w-32 bg-stone-100 dark:bg-slate-800 rounded-md"></div>
+                  <div className="h-4 w-24 bg-stone-200 dark:bg-slate-700 rounded-md"></div>
+                  <div className="h-3 w-28 bg-stone-100 dark:bg-slate-800 rounded-md"></div>
                 </div>
-                <div className="h-5 w-5 bg-stone-100 dark:bg-slate-800 rounded-full"></div>
+                <div className="h-4 w-4 bg-stone-100 dark:bg-slate-800 rounded-full"></div>
               </div>
             </div>
           ))}
         </div>
       ) : reports.length === 0 ? (
         /* Empty State with Section AK copy & watermark glyph */
-        <div className="relative overflow-hidden bg-white dark:bg-[#131B2E] border border-dashed border-stone-300 dark:border-slate-800 rounded-3xl p-8 sm:p-14 text-center space-y-5 max-w-xl mx-auto my-6">
+        <div className="relative overflow-hidden bg-white dark:bg-[#131B2E] border border-dashed border-stone-300 dark:border-slate-800 rounded-3xl p-6 sm:p-10 text-center space-y-4 max-w-xl mx-auto my-4">
           <div className="watermark-glyph select-none pointer-events-none opacity-40">Δ</div>
-          <div className="relative z-10 w-16 h-16 rounded-2xl bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 text-[#5B3FE0] text-3xl font-black flex items-center justify-center mx-auto shadow-xs">
+          <div className="relative z-10 w-12 h-12 rounded-xl bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 text-[#5B3FE0] text-2xl font-black flex items-center justify-center mx-auto shadow-xs">
             Δ
           </div>
-          <div className="relative z-10 space-y-2">
-            <h3 className="text-xl sm:text-2xl font-bold text-stone-900 dark:text-slate-100">No reports yet</h3>
-            <p className="text-sm sm:text-base text-stone-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
+          <div className="relative z-10 space-y-1">
+            <h3 className="text-lg sm:text-xl font-bold text-stone-900 dark:text-slate-100">No reports yet</h3>
+            <p className="text-xs sm:text-sm text-stone-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
               Upload a PDF or enter values manually to begin tracking changes.
             </p>
           </div>
-          <div className="relative z-10 flex flex-wrap items-center justify-center gap-3 pt-3">
+          <div className="relative z-10 flex flex-wrap items-center justify-center gap-2.5 pt-2">
             <button
               onClick={onOpenAddReport}
-              className="btn-primary inline-flex items-center space-x-2 px-5 py-3 text-white text-sm sm:text-base font-semibold rounded-xl shadow-xs cursor-pointer"
+              className="btn-primary inline-flex items-center space-x-1.5 px-4 py-2 sm:py-2.5 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-xs cursor-pointer"
             >
               <span>+ Add Your First Report</span>
             </button>
             <button
               onClick={handleLoadDemo}
               disabled={loadingDemo}
-              className="btn-secondary inline-flex items-center space-x-2 px-5 py-3 text-sm sm:text-base font-semibold shadow-xs cursor-pointer"
+              className="btn-secondary inline-flex items-center space-x-1.5 px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold shadow-xs cursor-pointer"
             >
               <span>✨ Explore with Demo Data</span>
             </button>
@@ -187,22 +187,22 @@ export default function ReportsView({ onOpenAddReport, onSelectReport, userId, s
         </div>
       ) : (
         /* Report History List */
-        <div className="grid grid-cols-1 gap-3.5 animate-fade-in">
+        <div className="grid grid-cols-1 gap-2.5 sm:gap-3 animate-fade-in">
           {reports.map((report, idx) => {
             const count = report.measurements?.[0]?.count ?? 0
             return (
               <div
                 key={report.id}
                 onClick={() => onSelectReport(report.id)}
-                className={`bg-white dark:bg-[#131B2E] border border-stone-200/80 dark:border-slate-800 hover:border-[#5B3FE0]/50 dark:hover:border-[#5B3FE0]/50 rounded-2xl p-5 sm:p-6 lg:p-7 card-interactive cursor-pointer flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 group stagger-${idx % 5}`}
+                className={`bg-white dark:bg-[#131B2E] border border-stone-200/80 dark:border-slate-800 hover:border-[#5B3FE0]/50 dark:hover:border-[#5B3FE0]/50 rounded-2xl p-4 sm:p-4.5 lg:p-5 card-interactive cursor-pointer flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 group stagger-${idx % 5}`}
               >
-                <div className="space-y-1.5">
-                  <div className="flex items-center space-x-3">
-                    <span className="font-bold text-lg sm:text-xl text-stone-900 dark:text-slate-100 group-hover:text-[#5B3FE0] dark:group-hover:text-[#8266FA] transition-colors">
+                <div className="space-y-1">
+                  <div className="flex items-center space-x-2.5">
+                    <span className="font-bold text-base sm:text-lg text-stone-900 dark:text-slate-100 group-hover:text-[#5B3FE0] dark:group-hover:text-[#8266FA] transition-colors">
                       {formatDate(report.report_date)}
                     </span>
                     <span
-                      className={`text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md ${
+                      className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
                         report.source_type === 'demo'
                           ? 'bg-violet-50 dark:bg-violet-950/60 text-[#5B3FE0] dark:text-[#8266FA] border border-violet-200/70 dark:border-violet-800/60'
                           : report.source_type === 'pdf'
@@ -213,21 +213,21 @@ export default function ReportsView({ onOpenAddReport, onSelectReport, userId, s
                       {report.source_type}
                     </span>
                   </div>
-                  <p className="text-sm sm:text-base text-stone-500 dark:text-slate-400 font-medium truncate max-w-xs sm:max-w-md">
+                  <p className="text-xs sm:text-sm text-stone-500 dark:text-slate-400 font-medium truncate max-w-xs sm:max-w-md">
                     {report.lab_name || 'Lab not specified'}
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between sm:justify-end sm:space-x-6 pt-3 sm:pt-0 border-t sm:border-t-0 border-stone-100 dark:border-slate-800">
+                <div className="flex items-center justify-between sm:justify-end sm:space-x-5 pt-2.5 sm:pt-0 border-t sm:border-t-0 border-stone-100 dark:border-slate-800">
                   <div className="text-left sm:text-right">
-                    <span className="text-sm sm:text-base font-bold text-stone-800 dark:text-slate-200 block">
+                    <span className="text-xs sm:text-sm font-bold text-stone-800 dark:text-slate-200 block">
                       {count} {count === 1 ? 'measurement' : 'measurements'}
                     </span>
-                    <span className="text-xs text-stone-400 dark:text-slate-500 font-mono block mt-0.5">
+                    <span className="text-[11px] text-stone-400 dark:text-slate-500 font-mono block mt-0.5">
                       Added {formatDate(report.created_at)}
                     </span>
                   </div>
-                  <span className="text-stone-400 dark:text-slate-500 group-hover:text-[#5B3FE0] dark:group-hover:text-[#8266FA] group-hover:translate-x-1.5 transition-all text-xl font-bold">
+                  <span className="text-stone-400 dark:text-slate-500 group-hover:text-[#5B3FE0] dark:group-hover:text-[#8266FA] group-hover:translate-x-1 transition-all text-lg font-bold">
                     →
                   </span>
                 </div>

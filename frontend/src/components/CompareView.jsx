@@ -200,18 +200,18 @@ export default function CompareView({ initialPrevId, initialCurrId, onOpenAddRep
   const currReportMeta = reports.find((r) => r.id === currReportId)
 
   return (
-    <div className="space-y-6 sm:space-y-8 antialiased">
+    <div className="space-y-6 sm:space-y-7 antialiased">
       {/* Header */}
-      <div className="border-b border-stone-200/80 dark:border-slate-800 pb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="flex items-center space-x-3.5">
-          <div className="w-11 h-11 rounded-2xl bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 text-[#5B3FE0] text-2xl font-black flex items-center justify-center shrink-0">
+      <div className="border-b border-stone-200/80 dark:border-slate-800 pb-4 sm:pb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+        <div className="flex items-center space-x-3">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 text-[#5B3FE0] text-xl sm:text-2xl font-black flex items-center justify-center shrink-0">
             ⚖️
           </div>
           <div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-stone-900 dark:text-slate-100">
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-stone-900 dark:text-slate-100">
               Compare Lab Reports
             </h2>
-            <p className="text-sm sm:text-base text-stone-500 dark:text-slate-400 font-medium mt-1">
+            <p className="text-xs sm:text-sm text-stone-500 dark:text-slate-400 font-medium mt-0.5">
               Select baseline and current reports to observe measurement changes (Δ).
             </p>
           </div>
@@ -221,23 +221,23 @@ export default function CompareView({ initialPrevId, initialCurrId, onOpenAddRep
       {/* Selectors & Swap Control Card */}
       <div 
         onMouseMove={handleSpotlightMouseMove}
-        className="spotlight-surface bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-3xl p-5 sm:p-6 lg:p-7 shadow-xs space-y-4 relative"
+        className="spotlight-surface bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-3xl p-4 sm:p-5 lg:p-6 shadow-xs space-y-3.5 relative"
       >
         {loadingReports ? (
-          <div className="py-8 text-center text-sm text-stone-400 dark:text-slate-500 animate-pulse">
+          <div className="py-6 text-center text-xs sm:text-sm text-stone-400 dark:text-slate-500 animate-pulse">
             Loading your reports...
           </div>
         ) : (
           <>
             {/* Desktop Symmetrical 3-Column Layout */}
-            <div className="hidden md:grid md:grid-cols-[1fr_auto_1fr] md:gap-4 lg:gap-6 items-start">
+            <div className="hidden md:grid md:grid-cols-[1fr_auto_1fr] md:gap-3.5 lg:gap-5 items-start">
               {/* Previous Report Column */}
-              <div className="space-y-2 text-left">
+              <div className="space-y-1.5 text-left">
                 <div className="flex items-center justify-between h-5">
                   <label htmlFor="prev-report-select" className="text-xs sm:text-sm font-bold uppercase tracking-wider text-stone-600 dark:text-slate-300">
                     Previous Report
                   </label>
-                  <span className="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-stone-100 dark:bg-slate-800 text-stone-500 dark:text-slate-400">
+                  <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-stone-100 dark:bg-slate-800 text-stone-500 dark:text-slate-400">
                     Baseline
                   </span>
                 </div>
@@ -245,7 +245,7 @@ export default function CompareView({ initialPrevId, initialCurrId, onOpenAddRep
                   id="prev-report-select"
                   value={prevReportId}
                   onChange={(e) => setPrevReportId(e.target.value)}
-                  className="w-full h-12 px-4 bg-stone-50/80 dark:bg-slate-900/90 border border-stone-200 dark:border-slate-700 rounded-xl text-base font-medium text-stone-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0] focus:border-[#5B3FE0] focus:bg-white dark:focus:bg-slate-900 transition-all"
+                  className="w-full h-10 sm:h-11 px-3.5 bg-stone-50/80 dark:bg-slate-900/90 border border-stone-200 dark:border-slate-700 rounded-xl text-sm sm:text-base font-medium text-stone-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0] focus:border-[#5B3FE0] focus:bg-white dark:focus:bg-slate-900 transition-all"
                 >
                   <option value="">Select baseline report...</option>
                   {reports.map((r) => (
@@ -254,7 +254,7 @@ export default function CompareView({ initialPrevId, initialCurrId, onOpenAddRep
                     </option>
                   ))}
                 </select>
-                <div className="h-6 flex items-center text-xs sm:text-sm text-stone-500 dark:text-slate-400">
+                <div className="h-5 flex items-center text-xs text-stone-500 dark:text-slate-400">
                   {prevReportMeta ? (
                     <span className="font-medium truncate">
                       {formatDate(prevReportMeta.report_date)} • {cleanLabName(prevReportMeta.lab_name)}
@@ -268,28 +268,28 @@ export default function CompareView({ initialPrevId, initialCurrId, onOpenAddRep
               {/* Center Swap Button */}
               <div className="flex flex-col items-center">
                 <div className="h-5" aria-hidden="true" />
-                <div className="pt-2">
+                <div className="pt-1.5">
                   <button
                     type="button"
                     onClick={handleSwap}
                     aria-label="Swap reports"
                     title="Swap reports"
                     disabled={!prevReportId || !currReportId}
-                    className="w-12 h-12 rounded-xl border border-stone-200 dark:border-slate-700 hover:border-[#5B3FE0] dark:hover:border-[#5B3FE0] bg-stone-50 dark:bg-slate-800/80 hover:bg-[#5B3FE0]/10 dark:hover:bg-[#5B3FE0]/20 text-stone-700 dark:text-slate-300 hover:text-[#5B3FE0] dark:hover:text-[#8266FA] text-lg font-bold transition-all flex items-center justify-center cursor-pointer shadow-2xs disabled:opacity-40 disabled:cursor-not-allowed btn-press"
+                    className="w-10 h-10 rounded-xl border border-stone-200 dark:border-slate-700 hover:border-[#5B3FE0] dark:hover:border-[#5B3FE0] bg-stone-50 dark:bg-slate-800/80 hover:bg-[#5B3FE0]/10 dark:hover:bg-[#5B3FE0]/20 text-stone-700 dark:text-slate-300 hover:text-[#5B3FE0] dark:hover:text-[#8266FA] text-base font-bold transition-all flex items-center justify-center cursor-pointer shadow-2xs disabled:opacity-40 disabled:cursor-not-allowed btn-press"
                   >
                     <span className="inline-block transition-transform duration-300 hover:rotate-180">⇄</span>
                   </button>
                 </div>
-                <div className="h-6" aria-hidden="true" />
+                <div className="h-5" aria-hidden="true" />
               </div>
 
               {/* Current Report Column */}
-              <div className="space-y-2 text-left">
+              <div className="space-y-1.5 text-left">
                 <div className="flex items-center justify-between h-5">
                   <label htmlFor="curr-report-select" className="text-xs sm:text-sm font-bold uppercase tracking-wider text-stone-600 dark:text-slate-300">
                     Current Report
                   </label>
-                  <span className="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 text-[#5B3FE0] dark:text-[#8266FA]">
+                  <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 text-[#5B3FE0] dark:text-[#8266FA]">
                     Newer
                   </span>
                 </div>
@@ -297,7 +297,7 @@ export default function CompareView({ initialPrevId, initialCurrId, onOpenAddRep
                   id="curr-report-select"
                   value={currReportId}
                   onChange={(e) => setCurrReportId(e.target.value)}
-                  className="w-full h-12 px-4 bg-stone-50/80 dark:bg-slate-900/90 border border-stone-200 dark:border-slate-700 rounded-xl text-base font-medium text-stone-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0] focus:border-[#5B3FE0] focus:bg-white dark:focus:bg-slate-900 transition-all"
+                  className="w-full h-10 sm:h-11 px-3.5 bg-stone-50/80 dark:bg-slate-900/90 border border-stone-200 dark:border-slate-700 rounded-xl text-sm sm:text-base font-medium text-stone-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0] focus:border-[#5B3FE0] focus:bg-white dark:focus:bg-slate-900 transition-all"
                 >
                   <option value="">Select current report...</option>
                   {reports.map((r) => (
@@ -306,7 +306,7 @@ export default function CompareView({ initialPrevId, initialCurrId, onOpenAddRep
                     </option>
                   ))}
                 </select>
-                <div className="h-6 flex items-center text-xs sm:text-sm text-stone-500 dark:text-slate-400">
+                <div className="h-5 flex items-center text-xs text-stone-500 dark:text-slate-400">
                   {currReportMeta ? (
                     <span className="font-medium truncate">
                       {formatDate(currReportMeta.report_date)} • {cleanLabName(currReportMeta.lab_name)}
@@ -319,9 +319,9 @@ export default function CompareView({ initialPrevId, initialCurrId, onOpenAddRep
             </div>
 
             {/* Mobile Stacked Layout (Never squeeze side-by-side on phone) */}
-            <div className="md:hidden space-y-3.5">
+            <div className="md:hidden space-y-3">
               {/* Previous Report */}
-              <div className="space-y-1.5 text-left">
+              <div className="space-y-1 text-left">
                 <div className="flex items-center justify-between">
                   <label htmlFor="prev-report-select-mobile" className="text-xs font-bold uppercase tracking-wider text-stone-600 dark:text-slate-300">
                     Previous Report
@@ -334,7 +334,7 @@ export default function CompareView({ initialPrevId, initialCurrId, onOpenAddRep
                   id="prev-report-select-mobile"
                   value={prevReportId}
                   onChange={(e) => setPrevReportId(e.target.value)}
-                  className="w-full h-12 px-3.5 bg-stone-50/80 dark:bg-slate-900/90 border border-stone-200 dark:border-slate-700 rounded-xl text-base font-medium text-stone-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0] focus:border-[#5B3FE0]"
+                  className="w-full h-10 sm:h-11 px-3 bg-stone-50/80 dark:bg-slate-900/90 border border-stone-200 dark:border-slate-700 rounded-xl text-sm font-medium text-stone-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0] focus:border-[#5B3FE0]"
                 >
                   <option value="">Select baseline report...</option>
                   {reports.map((r) => (
@@ -343,7 +343,7 @@ export default function CompareView({ initialPrevId, initialCurrId, onOpenAddRep
                     </option>
                   ))}
                 </select>
-                <div className="text-xs text-stone-500 dark:text-slate-400 min-h-5 flex items-center">
+                <div className="text-xs text-stone-500 dark:text-slate-400 min-h-4 flex items-center">
                   {prevReportMeta ? (
                     <span className="truncate">{formatDate(prevReportMeta.report_date)} • {cleanLabName(prevReportMeta.lab_name)}</span>
                   ) : (
@@ -359,7 +359,7 @@ export default function CompareView({ initialPrevId, initialCurrId, onOpenAddRep
                   onClick={handleSwap}
                   aria-label="Swap reports"
                   disabled={!prevReportId || !currReportId}
-                  className="inline-flex items-center justify-center space-x-2 px-4 py-2 rounded-xl border border-stone-200 dark:border-slate-700 bg-stone-50 dark:bg-slate-800/80 text-xs font-bold text-stone-700 dark:text-slate-300 hover:text-[#5B3FE0] dark:hover:text-[#8266FA] disabled:opacity-40 btn-press"
+                  className="inline-flex items-center justify-center space-x-1.5 px-3 py-1.5 rounded-xl border border-stone-200 dark:border-slate-700 bg-stone-50 dark:bg-slate-800/80 text-xs font-bold text-stone-700 dark:text-slate-300 hover:text-[#5B3FE0] dark:hover:text-[#8266FA] disabled:opacity-40 btn-press"
                 >
                   <span>⇅</span>
                   <span>Swap Reports</span>
@@ -367,7 +367,7 @@ export default function CompareView({ initialPrevId, initialCurrId, onOpenAddRep
               </div>
 
               {/* Current Report */}
-              <div className="space-y-1.5 text-left">
+              <div className="space-y-1 text-left">
                 <div className="flex items-center justify-between">
                   <label htmlFor="curr-report-select-mobile" className="text-xs font-bold uppercase tracking-wider text-stone-600 dark:text-slate-300">
                     Current Report
@@ -380,7 +380,7 @@ export default function CompareView({ initialPrevId, initialCurrId, onOpenAddRep
                   id="curr-report-select-mobile"
                   value={currReportId}
                   onChange={(e) => setCurrReportId(e.target.value)}
-                  className="w-full h-12 px-3.5 bg-stone-50/80 dark:bg-slate-900/90 border border-stone-200 dark:border-slate-700 rounded-xl text-base font-medium text-stone-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0] focus:border-[#5B3FE0]"
+                  className="w-full h-10 sm:h-11 px-3 bg-stone-50/80 dark:bg-slate-900/90 border border-stone-200 dark:border-slate-700 rounded-xl text-sm font-medium text-stone-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#5B3FE0] focus:border-[#5B3FE0]"
                 >
                   <option value="">Select current report...</option>
                   {reports.map((r) => (
@@ -389,7 +389,7 @@ export default function CompareView({ initialPrevId, initialCurrId, onOpenAddRep
                     </option>
                   ))}
                 </select>
-                <div className="text-xs text-stone-500 dark:text-slate-400 min-h-5 flex items-center">
+                <div className="text-xs text-stone-500 dark:text-slate-400 min-h-4 flex items-center">
                   {currReportMeta ? (
                     <span className="truncate">{formatDate(currReportMeta.report_date)} • {cleanLabName(currReportMeta.lab_name)}</span>
                   ) : (
@@ -402,7 +402,7 @@ export default function CompareView({ initialPrevId, initialCurrId, onOpenAddRep
         )}
 
         {comparisonError && (
-          <div className="p-4 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 rounded-2xl text-sm font-medium text-amber-800 dark:text-amber-300 animate-fade-in">
+          <div className="p-3.5 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 rounded-2xl text-xs sm:text-sm font-medium text-amber-800 dark:text-amber-300 animate-fade-in">
             {comparisonError}
           </div>
         )}
@@ -410,74 +410,74 @@ export default function CompareView({ initialPrevId, initialCurrId, onOpenAddRep
 
       {/* Comparison Results Section */}
       {loadingComparison ? (
-        <div className="space-y-4 animate-fade-in">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        <div className="space-y-3.5 animate-fade-in">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3.5">
             {[1, 2, 3, 4].map((n) => (
-              <div key={n} className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-5 space-y-2 animate-shimmer">
-                <div className="h-3.5 w-20 bg-stone-200/70 dark:bg-slate-700/60 rounded"></div>
-                <div className="h-10 w-16 bg-stone-200/70 dark:bg-slate-700/60 rounded"></div>
-                <div className="h-3 w-24 bg-stone-200/50 dark:bg-slate-700/40 rounded"></div>
+              <div key={n} className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-4 space-y-2 animate-shimmer">
+                <div className="h-3 w-16 bg-stone-200/70 dark:bg-slate-700/60 rounded"></div>
+                <div className="h-8 w-14 bg-stone-200/70 dark:bg-slate-700/60 rounded"></div>
+                <div className="h-3 w-20 bg-stone-200/50 dark:bg-slate-700/40 rounded"></div>
               </div>
             ))}
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {[1, 2, 3].map((n) => (
-              <div key={n} className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-6 space-y-3 animate-shimmer">
-                <div className="h-6 w-44 bg-stone-200/70 dark:bg-slate-700/60 rounded"></div>
-                <div className="h-20 w-full bg-stone-100/60 dark:bg-slate-800/50 rounded-xl"></div>
+              <div key={n} className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-4 sm:p-5 space-y-2.5 animate-shimmer">
+                <div className="h-5 w-40 bg-stone-200/70 dark:bg-slate-700/60 rounded"></div>
+                <div className="h-16 w-full bg-stone-100/60 dark:bg-slate-800/50 rounded-xl"></div>
               </div>
             ))}
           </div>
         </div>
       ) : comparison ? (
-        <div className="space-y-6">
+        <div className="space-y-5">
           {/* Summary Metric Strip */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-            <div className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-2xs space-y-1.5 card-interactive">
-              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-stone-500 dark:text-slate-400 block">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3.5">
+            <div className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-4 sm:p-4.5 lg:p-5 shadow-2xs space-y-1 card-interactive">
+              <span className="text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-slate-400 block">
                 Total Compared
               </span>
-              <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-stone-900 dark:text-slate-100 font-mono">
+              <div className="text-2xl sm:text-3xl lg:text-4xl font-black text-stone-900 dark:text-slate-100 font-mono">
                 {formatValue(comparison.summary.total ?? comparison.summary.totalCompared ?? comparison.results.length)}
               </div>
-              <p className="text-xs sm:text-sm text-stone-400 dark:text-slate-500 font-medium">Total matched tests</p>
+              <p className="text-[11px] sm:text-xs text-stone-400 dark:text-slate-500 font-medium">Total matched tests</p>
             </div>
 
-            <div className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-2xs space-y-1.5 card-interactive">
-              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-stone-500 dark:text-slate-400 block">
+            <div className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-4 sm:p-4.5 lg:p-5 shadow-2xs space-y-1 card-interactive">
+              <span className="text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-slate-400 block">
                 Changed Measurements
               </span>
-              <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#5B3FE0] dark:text-[#8266FA] font-mono">
+              <div className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#5B3FE0] dark:text-[#8266FA] font-mono">
                 {formatValue(comparison.summary.changed ?? comparison.summary.changedCount ?? 0)}
               </div>
-              <p className="text-xs sm:text-sm text-stone-400 dark:text-slate-500 font-medium">Values with non-zero Δ</p>
+              <p className="text-[11px] sm:text-xs text-stone-400 dark:text-slate-500 font-medium">Values with non-zero Δ</p>
             </div>
 
-            <div className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-2xs space-y-1.5 card-interactive">
-              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-stone-500 dark:text-slate-400 block">
+            <div className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-4 sm:p-4.5 lg:p-5 shadow-2xs space-y-1 card-interactive">
+              <span className="text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-slate-400 block">
                 Unchanged Measurements
               </span>
-              <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-blue-600 dark:text-blue-400 font-mono">
+              <div className="text-2xl sm:text-3xl lg:text-4xl font-black text-blue-600 dark:text-blue-400 font-mono">
                 {formatValue(comparison.summary.unchanged ?? comparison.summary.unchangedCount ?? 0)}
               </div>
-              <p className="text-xs sm:text-sm text-stone-400 dark:text-slate-500 font-medium">Identical values (Δ 0.0)</p>
+              <p className="text-[11px] sm:text-xs text-stone-400 dark:text-slate-500 font-medium">Identical values (Δ 0.0)</p>
             </div>
 
-            <div className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-5 sm:p-6 shadow-2xs space-y-1.5 card-interactive">
-              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-stone-500 dark:text-slate-400 block">
+            <div className="bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-4 sm:p-4.5 lg:p-5 shadow-2xs space-y-1 card-interactive">
+              <span className="text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-slate-400 block">
                 New / Missing
               </span>
-              <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-stone-700 dark:text-slate-200 font-mono">
+              <div className="text-2xl sm:text-3xl lg:text-4xl font-black text-stone-700 dark:text-slate-200 font-mono">
                 {formatValue((comparison.summary.newCount || 0) + (comparison.summary.missingCount || 0))}
               </div>
-              <p className="text-xs sm:text-sm text-stone-400 dark:text-slate-500 font-medium">
+              <p className="text-[11px] sm:text-xs text-stone-400 dark:text-slate-500 font-medium">
                 {comparison.summary.newCount || 0} new, {comparison.summary.missingCount || 0} missing
               </p>
             </div>
           </div>
 
           {/* Filter Chips */}
-          <div className="flex flex-wrap gap-2.5 bg-stone-100 dark:bg-[#0E1524] p-2 rounded-2xl border border-stone-200/70 dark:border-slate-800">
+          <div className="flex flex-wrap gap-2 bg-stone-100 dark:bg-[#0E1524] p-1.5 rounded-2xl border border-stone-200/70 dark:border-slate-800">
             {[
               { key: 'ALL', label: `All (${comparison.results.length})` },
               { key: 'CHANGED', label: `Changed (${comparison.summary.changed ?? comparison.summary.changedCount ?? 0})` },
@@ -492,7 +492,7 @@ export default function CompareView({ initialPrevId, initialCurrId, onOpenAddRep
                 key={tab.key}
                 type="button"
                 onClick={() => setFilterCategory(tab.key)}
-                className={`px-4 py-2.5 sm:px-5 sm:py-3 text-sm sm:text-base font-semibold rounded-xl transition-all cursor-pointer btn-press ${
+                className={`px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all cursor-pointer btn-press ${
                   filterCategory === tab.key
                     ? 'bg-white dark:bg-[#1E293B] text-stone-900 dark:text-slate-100 shadow-xs font-bold scale-[1.02]'
                     : 'text-stone-600 dark:text-slate-400 hover:text-stone-900 dark:hover:text-slate-100 hover:bg-white/60 dark:hover:bg-slate-800/60'
@@ -504,9 +504,9 @@ export default function CompareView({ initialPrevId, initialCurrId, onOpenAddRep
           </div>
 
           {/* Measurement Delta Rows / Cards with Smooth Crossfade */}
-          <div key={filterCategory} className="space-y-4 animate-fade-in">
+          <div key={filterCategory} className="space-y-3 sm:space-y-3.5 animate-fade-in">
             {filteredResults.length === 0 ? (
-              <div className="relative overflow-hidden bg-white dark:bg-[#131B2E] border border-dashed border-stone-200 dark:border-slate-800 rounded-2xl p-12 text-center text-sm text-stone-400 dark:text-slate-500">
+              <div className="relative overflow-hidden bg-white dark:bg-[#131B2E] border border-dashed border-stone-200 dark:border-slate-800 rounded-2xl p-8 sm:p-10 text-center text-xs sm:text-sm text-stone-400 dark:text-slate-500">
                 <div className="absolute -right-3 -bottom-5 text-stone-200/25 dark:text-slate-800/40 text-8xl font-black select-none pointer-events-none">
                   Δ
                 </div>
@@ -516,19 +516,19 @@ export default function CompareView({ initialPrevId, initialCurrId, onOpenAddRep
               filteredResults.map((item, idx) => (
                 <div
                   key={item.testNameNormalized + idx}
-                  className={`group bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-5 sm:p-6 lg:p-7 shadow-2xs card-interactive space-y-4 stagger-${idx % 5}`}
+                  className={`group bg-white dark:bg-[#131B2E] border border-stone-200/90 dark:border-slate-800 rounded-2xl p-4 sm:p-5 lg:p-5.5 shadow-2xs card-interactive space-y-3 stagger-${idx % 5}`}
                 >
                   {/* Row Header: Test Name & Category Badge */}
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div>
-                      <h4 className="text-lg sm:text-xl font-bold text-stone-900 dark:text-slate-100">
+                      <h4 className="text-base sm:text-lg font-bold text-stone-900 dark:text-slate-100">
                         {item.testNameNormalized}
                       </h4>
                       {(item.testNameRawPrev &&
                         item.testNameRawPrev.toLowerCase() !== item.testNameNormalized.toLowerCase()) ||
                       (item.testNameRawCurr &&
                         item.testNameRawCurr.toLowerCase() !== item.testNameNormalized.toLowerCase()) ? (
-                        <p className="text-xs sm:text-sm text-stone-400 dark:text-slate-500 font-mono mt-0.5">
+                        <p className="text-[11px] sm:text-xs text-stone-400 dark:text-slate-500 font-mono mt-0.5">
                           Raw aliases: {item.testNameRawPrev || '—'} → {item.testNameRawCurr || '—'}
                         </p>
                       ) : null}
@@ -537,27 +537,27 @@ export default function CompareView({ initialPrevId, initialCurrId, onOpenAddRep
                     {/* Category Badges */}
                     <div>
                       {item.category === 'CHANGED' && (
-                        <span className="px-3.5 py-1.5 text-xs sm:text-sm font-bold uppercase tracking-wider bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 text-[#5B3FE0] dark:text-[#8266FA] rounded-xl">
+                        <span className="px-2.5 py-1 text-xs font-bold uppercase tracking-wider bg-[#5B3FE0]/10 dark:bg-[#5B3FE0]/20 text-[#5B3FE0] dark:text-[#8266FA] rounded-xl">
                           Δ Changed
                         </span>
                       )}
                       {item.category === 'UNCHANGED' && (
-                        <span className="px-3.5 py-1.5 text-xs sm:text-sm font-bold uppercase tracking-wider bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 rounded-xl">
+                        <span className="px-2.5 py-1 text-xs font-bold uppercase tracking-wider bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 rounded-xl">
                           Unchanged
                         </span>
                       )}
                       {item.category === 'NEW' && (
-                        <span className="px-3.5 py-1.5 text-xs sm:text-sm font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 rounded-xl">
+                        <span className="px-2.5 py-1 text-xs font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 rounded-xl">
                           New in Current
                         </span>
                       )}
                       {item.category === 'MISSING' && (
-                        <span className="px-3.5 py-1.5 text-xs sm:text-sm font-bold uppercase tracking-wider bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 rounded-xl">
+                        <span className="px-2.5 py-1 text-xs font-bold uppercase tracking-wider bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 rounded-xl">
                           Not in Current
                         </span>
                       )}
                       {item.category === 'UNABLE_TO_COMPARE' && (
-                        <span className="px-3.5 py-1.5 text-xs sm:text-sm font-bold uppercase tracking-wider bg-stone-100 dark:bg-slate-800 text-stone-600 dark:text-slate-300 rounded-xl">
+                        <span className="px-2.5 py-1 text-xs font-bold uppercase tracking-wider bg-stone-100 dark:bg-slate-800 text-stone-600 dark:text-slate-300 rounded-xl">
                           Unable to Compare
                         </span>
                       )}
@@ -565,83 +565,83 @@ export default function CompareView({ initialPrevId, initialCurrId, onOpenAddRep
                   </div>
 
                   {/* Flow comparison: Previous → Current → Delta (Sequential visual language) */}
-                  <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-5 items-center bg-stone-50/70 dark:bg-[#0F172A]/70 p-5 sm:p-6 rounded-2xl border border-stone-200/70 dark:border-slate-800">
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4 items-center bg-stone-50/70 dark:bg-[#0F172A]/70 p-4 sm:p-4.5 rounded-2xl border border-stone-200/70 dark:border-slate-800">
                     {/* Previous Column */}
-                    <div className="md:col-span-4 space-y-1.5 flow-prev">
-                      <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-stone-500 dark:text-slate-400 block">
+                    <div className="md:col-span-4 space-y-1 flow-prev">
+                      <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-slate-400 block">
                         Previous ({prevReportMeta ? formatDate(prevReportMeta.report_date) : 'Baseline'})
                       </span>
                       {item.prev ? (
                         <div
                           className={`rounded-xl transition-all ${
                             item.prev.rangeStatus === 'below' || item.prev.rangeStatus === 'above'
-                              ? 'bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 p-2.5 -m-1'
-                              : 'p-1 -m-1'
+                              ? 'bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 p-2 -m-0.5'
+                              : 'p-0.5 -m-0.5'
                           }`}
                         >
                           <div>
-                            <span className="text-2xl sm:text-3xl font-black text-stone-900 dark:text-slate-100 font-mono">
+                            <span className="text-xl sm:text-2xl font-black text-stone-900 dark:text-slate-100 font-mono">
                               {item.prev.valueNumeric !== null
                                 ? formatValue(item.prev.valueNumeric)
                                 : item.prev.valueText}
                             </span>
                             {item.prev.unit && (
-                              <span className="ml-1.5 text-sm sm:text-base text-stone-500 dark:text-slate-400 font-mono">{item.prev.unit}</span>
+                              <span className="ml-1 text-xs sm:text-sm text-stone-500 dark:text-slate-400 font-mono">{item.prev.unit}</span>
                             )}
                           </div>
-                          <div className="text-xs sm:text-sm text-stone-500 dark:text-slate-400 font-mono mt-1">
+                          <div className="text-[11px] sm:text-xs text-stone-500 dark:text-slate-400 font-mono mt-0.5">
                             Ref: {formatReferenceRange(item.prev.refMin, item.prev.refMax, item.prev.refText)}
                           </div>
                           {renderRangeStatusBadge(item.prev.rangeStatus, item.prev.valueNumeric)}
                         </div>
                       ) : (
-                        <span className="text-sm sm:text-base text-stone-400 dark:text-slate-500 italic">Not tested in baseline</span>
+                        <span className="text-xs sm:text-sm text-stone-400 dark:text-slate-500 italic">Not tested in baseline</span>
                       )}
                     </div>
 
                     {/* Flow Connector Arrow (responsive: ↓ on mobile, → on desktop) */}
-                    <div className="md:col-span-1 flex items-center justify-center py-1 md:py-0 flow-arrow-1">
-                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-stone-200/70 dark:bg-slate-800 border border-stone-300/80 dark:border-slate-700 text-stone-600 dark:text-slate-300 text-xs sm:text-sm font-bold flex items-center justify-center shadow-2xs">
+                    <div className="md:col-span-1 flex items-center justify-center py-0.5 md:py-0 flow-arrow-1">
+                      <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-stone-200/70 dark:bg-slate-800 border border-stone-300/80 dark:border-slate-700 text-stone-600 dark:text-slate-300 text-xs font-bold flex items-center justify-center shadow-2xs">
                         <span className="hidden md:inline leading-none">→</span>
                         <span className="md:hidden leading-none">↓</span>
                       </div>
                     </div>
 
                     {/* Current Column */}
-                    <div className="md:col-span-4 space-y-1.5 flow-curr">
-                      <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-stone-500 dark:text-slate-400 block">
+                    <div className="md:col-span-4 space-y-1 flow-curr">
+                      <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-slate-400 block">
                         Current ({currReportMeta ? formatDate(currReportMeta.report_date) : 'Newer'})
                       </span>
                       {item.curr ? (
                         <div
                           className={`rounded-xl transition-all ${
                             item.curr.rangeStatus === 'below' || item.curr.rangeStatus === 'above'
-                              ? 'bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 p-2.5 -m-1'
-                              : 'p-1 -m-1'
+                              ? 'bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 p-2 -m-0.5'
+                              : 'p-0.5 -m-0.5'
                           }`}
                         >
                           <div>
-                            <span className="text-2xl sm:text-3xl font-black text-stone-900 dark:text-slate-100 font-mono">
+                            <span className="text-xl sm:text-2xl font-black text-stone-900 dark:text-slate-100 font-mono">
                               {item.curr.valueNumeric !== null
                                 ? formatValue(item.curr.valueNumeric)
                                 : item.curr.valueText}
                             </span>
                             {item.curr.unit && (
-                              <span className="ml-1.5 text-sm sm:text-base text-stone-500 dark:text-slate-400 font-mono">{item.curr.unit}</span>
+                              <span className="ml-1 text-xs sm:text-sm text-stone-500 dark:text-slate-400 font-mono">{item.curr.unit}</span>
                             )}
                           </div>
-                          <div className="text-xs sm:text-sm text-stone-500 dark:text-slate-400 font-mono mt-1">
+                          <div className="text-[11px] sm:text-xs text-stone-500 dark:text-slate-400 font-mono mt-0.5">
                             Ref: {formatReferenceRange(item.curr.refMin, item.curr.refMax, item.curr.refText)}
                           </div>
                           {renderRangeStatusBadge(item.curr.rangeStatus, item.curr.valueNumeric)}
                         </div>
                       ) : (
-                        <span className="text-sm sm:text-base text-stone-400 dark:text-slate-500 italic">Not tested in current report</span>
+                        <span className="text-xs sm:text-sm text-stone-400 dark:text-slate-500 italic">Not tested in current report</span>
                       )}
                     </div>
 
                     {/* Delta Badge Column */}
-                    <div className="md:col-span-3 border-t md:border-t-0 md:border-l border-stone-200/80 dark:border-slate-800 pt-3 md:pt-0 md:pl-5 flow-delta rounded-xl transition-all group-hover:bg-[#5B3FE0]/5 dark:group-hover:bg-[#5B3FE0]/10 p-2">
+                    <div className="md:col-span-3 border-t md:border-t-0 md:border-l border-stone-200/80 dark:border-slate-800 pt-2.5 md:pt-0 md:pl-4 flow-delta rounded-xl transition-all group-hover:bg-[#5B3FE0]/5 dark:group-hover:bg-[#5B3FE0]/10 p-1.5">
                       {item.category === 'CHANGED' && !item.isTextual && (
                         <div className="space-y-1.5">
                           <div className="flex items-center space-x-2">
